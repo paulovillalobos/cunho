@@ -1,0 +1,19 @@
+# The images built from this directory (deploy/Dockerfile, tools/oidf/Dockerfile) see only what they copy. Nothing
+# else here reaches an image, and neither do compiled or editor files that lie beside the sources: Python runs a
+# compiled file in preference to its source when the two match.
+*
+!pyproject.toml
+!README.md
+!NOTICE
+!LICENSE
+!src
+!deploy/requirements.txt
+!tools/dev_pki.py
+!tools/deploy_init.py
+!tests/__init__.py
+!tests/engine/__init__.py
+!tests/engine/pki.py
+!demo/metadata
+**/__pycache__
+**/*.py[cod]
+**/.DS_Store

@@ -1,0 +1,190 @@
+{
+  "suite": "suite5_chaos",
+  "passed": 28,
+  "failed": 0,
+  "total": 28,
+  "ok": true,
+  "duration_s": 50.8,
+  "meta": {},
+  "checks": [
+    {
+      "check": "kill/restart: revocation before the crash accepted",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "kill/restart: audit chain still valid",
+      "pass": true,
+      "detail": {
+        "valid": true,
+        "detail": "5 entries verified; 6 anchor lines"
+      }
+    },
+    {
+      "check": "kill/restart: revoked status survived",
+      "pass": true,
+      "before": 1,
+      "after": 1
+    },
+    {
+      "check": "kill/restart: pre-crash token still issues",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "kill/restart: fresh flow works after restart",
+      "pass": true,
+      "detail": "issued"
+    },
+    {
+      "check": "sqlite locked: issuance fails closed (no credential, clean JSON error)",
+      "pass": true,
+      "status": 500,
+      "elapsed_s": 31.9,
+      "body": "{\"error\":\"server_error\",\"error_description\":\"internal error\"}"
+    },
+    {
+      "check": "sqlite locked: audit chain valid after lock clears",
+      "pass": true,
+      "detail": {
+        "valid": true,
+        "detail": "2 entries verified; 3 anchor lines"
+      }
+    },
+    {
+      "check": "sqlite locked: fresh flow works after lock clears",
+      "pass": true,
+      "detail": "issued"
+    },
+    {
+      "check": "disk full: baseline flow issues before fault",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "disk full: issuance fails closed during credential write (no 200)",
+      "pass": true,
+      "status": 500
+    },
+    {
+      "check": "disk full: audit chain stays valid across the fault",
+      "pass": true,
+      "before": true,
+      "after": true
+    },
+    {
+      "check": "disk full on the audit write: no credential, clean JSON error",
+      "pass": true,
+      "status": 500,
+      "body": "{\"error\":\"server_error\",\"error_description\":\"audit log unavailable\"}"
+    },
+    {
+      "check": "disk full on the audit write: no new valid status slot left behind",
+      "pass": true,
+      "leaked": 0
+    },
+    {
+      "check": "disk full on the audit write: audit chain still valid",
+      "pass": true
+    },
+    {
+      "check": "disk full: flow works again once space is back",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "anchor disk full after the commit: the committed offer is answered as created",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "check": "anchor disk still full: the next action is refused before it changes anything, clean JSON",
+      "pass": true,
+      "status": 500
+    },
+    {
+      "check": "anchor torn: verify does not call it valid",
+      "pass": true,
+      "verify": [
+        false,
+        "the anchor file ends in 124 bytes after its last line, at offset 248 (a torn or lost write); the next logged action, or maintenance within a minute, repairs it"
+      ]
+    },
+    {
+      "check": "the repair is torn too: refused cleanly, nothing changed",
+      "pass": true,
+      "status": 500
+    },
+    {
+      "check": "anchor disk has room again: both tears are closed, declared and logged, and the log verifies",
+      "pass": true,
+      "status": 201,
+      "verify": [
+        true,
+        "3 entries verified; 4 anchor lines; 1 damaged stretch(es) of the anchor (161 bytes) were closed and declared"
+      ]
+    },
+    {
+      "check": "a NUL tail: verify says damaged, and after a restart the next action repairs it",
+      "pass": true,
+      "nul": [
+        false,
+        "the anchor file ends in 4096 bytes after its last line, at offset 1262 (a torn or lost write); the next logged action, or maintenance within a minute, repairs it"
+      ],
+      "status": 201,
+      "verify": [
+        true,
+        "5 entries verified; 6 anchor lines; 2 damaged stretch(es) of the anchor (4257 bytes) were closed and declared"
+      ]
+    },
+    {
+      "check": "clock jumps: baseline flow issues",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "clock jumps: maintenance during a 400-day jump goes by the host clock and prunes and sweeps nothing",
+      "pass": true,
+      "maintenance": {
+        "expired_entries": 0,
+        "audit_entries_pruned": 0,
+        "decoys_scheduled": 0,
+        "auth_failures_logged": 0,
+        "audit_pruning_held": 1,
+        "wal_cleared": 1
+      },
+      "entries_before": 2,
+      "entries_after": 2
+    },
+    {
+      "check": "clock jumps: maintenance runs on time once the clock is back, and the log verifies",
+      "pass": true,
+      "maintenance": {
+        "expired_entries": 7,
+        "audit_entries_pruned": 0,
+        "decoys_scheduled": 6,
+        "auth_failures_logged": 0,
+        "wal_cleared": 1
+      }
+    },
+    {
+      "check": "clock jumps: expired pre-auth code rejected cleanly (no 5xx)",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "check": "clock jumps: fresh flow works at the new time",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "clock jumps: backward jump does not 5xx",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "clock jumps: audit chain valid after jumps",
+      "pass": true
+    }
+  ]
+}

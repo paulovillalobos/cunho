@@ -1,0 +1,52 @@
+{
+  "source": "/tmp/cunho-under-test",
+  "commit": "6f127eb",
+  "mode": "full",
+  "python": "3.12.15",
+  "platform": "macOS-26.5.1-arm64-arm-64bit",
+  "generated": "2026-11-04 07:48:36",
+  "suites": {
+    "suite1_load.py": {
+      "passed": 10,
+      "failed": 0,
+      "total": 10,
+      "ok": true,
+      "duration_s": 6.7
+    },
+    "suite2_races.py": {
+      "passed": 11,
+      "failed": 0,
+      "total": 11,
+      "ok": true,
+      "duration_s": 6.1
+    },
+    "suite3_fuzz.py": {
+      "passed": 15,
+      "failed": 0,
+      "total": 15,
+      "ok": true,
+      "duration_s": 20.6
+    },
+    "suite4_attack.py": {
+      "passed": 23,
+      "failed": 0,
+      "total": 23,
+      "ok": true,
+      "duration_s": 3.4
+    },
+    "suite5_chaos.py": {
+      "passed": 20,
+      "failed": 0,
+      "total": 20,
+      "ok": true,
+      "duration_s": 48.3
+    },
+    "suite6_soak.py": {
+      "passed": 7,
+      "failed": 0,
+      "total": 7,
+      "ok": true,
+      "duration_s": 1819.4
+    }
+  }
+}

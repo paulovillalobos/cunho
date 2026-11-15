@@ -1,0 +1,201 @@
+# The demo stack on one host: Caddy (TLS), two cunho instances (the PID provider and the course provider) and the
+# demo service. See docs/DEMO.md. Set ISSUER_HOST and DEMO_HOST (with a port when it is not 443) in deploy/.env;
+# locally: ISSUER_HOST=issuer.localhost:8443 DEMO_HOST=demo.localhost:8443 HTTPS_PORT=8443.
+name: cunho-demo
+
+# Docker keeps what a container prints without limit unless told otherwise: the newest 30 MB are kept.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
+x-hardened: &hardened
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  restart: unless-stopped
+  networks: [internal]
+  logging: *logging
+
+x-cunho: &cunho
+  <<: *hardened
+  image: cunho-demo:local
+  depends_on:
+    init:
+      condition: service_completed_successfully
+
+x-cunho-env: &cunho-env
+  CUNHO_PROFILE: pid_provider
+  CUNHO_PKCS11_MODULE: /usr/lib/softhsm/libsofthsm2.so
+  CUNHO_SIGNING_CHAIN: /secrets/pki/signing.pem
+  # The status lists are signed with the credentials' own key and chain, not a status key of their own: a wallet
+  # that trusts an issuer it does not know on the chain the credential carries (Paradym) takes its status list only
+  # when the list carries that same chain. Production asks for a separate status key (a trusted list then names
+  # its certificate); the demo has no trusted list.
+  CUNHO_MDOC_SIGNING_CHAIN: /secrets/pki/mdoc-signing.pem
+  CUNHO_MDOC_TRUST_ANCHORS: /secrets/pki/iaca.pem
+  CUNHO_SIGNING_TRUST_ANCHORS: /secrets/pki/issuer-root.pem
+  CUNHO_ACCESS_SIGNING_CHAIN: /secrets/pki/m3/access.pem
+  CUNHO_ACCESS_TRUST_ANCHORS: /secrets/pki/m3/access-ca.pem
+  CUNHO_REGISTRATION_CERTIFICATE: /secrets/pki/registration-certificate.jwt
+  CUNHO_REGISTRAR_DATASET: /secrets/pki/registrar.json
+  CUNHO_ENCRYPTION_KEYS: /secrets/pki/encryption.key
+  # Why a wallet's request was refused, without who sent it (docs/operations.md): off unless LOG_REFUSALS=1 in deploy/.env.
+  CUNHO_LOG_REFUSALS: ${LOG_REFUSALS:-0}
+  # A wallet that sends iss in its key proof in the anonymous pre-authorized flow (Lissi) is not refused for it
+  # (docs/operations.md); the demo lets real wallets in.
+  CUNHO_IGNORE_ANONYMOUS_PROOF_ISS: "1"
+  # Wallets that look for the metadata after the issuer's path (Sphereon) find it there too (docs/operations.md).
+  CUNHO_APPENDED_WELL_KNOWN: "1"
+  # The wallet providers trusted: the development ones by default; for real wallets, the PEM file of their
+  # providers' attestation signers (docs/DEMO.md).
+  CUNHO_WALLET_PROVIDER_ANCHORS: ${WALLET_PROVIDER_ANCHORS:-/secrets/pki/all-wallet-providers.pem}
+  CUNHO_WALLET_PROVIDER_CRLS: ${WALLET_PROVIDER_CRLS:-/secrets/pki/all-wallet-providers.crl}
+  CUNHO_REDIRECT_URIS: ${REDIRECT_URIS:-{"https://wallet-solution.test":["https://wallet.test/callback"]}}
+  CUNHO_STORE_PATH: /data/store.db
+  CUNHO_AUDIT_ANCHOR_PATH: /data/audit.anchor
+  CUNHO_AUDIT_RETENTION_DAYS: "365"
+  # A demo: a revocation shows at the next publication, and a demo credential lives 30 days at most.
+  CUNHO_STATUS_REVOCATION_JITTER: "0"
+  CUNHO_STATUS_PUBLISH_INTERVAL: "60"
+  CUNHO_CREDENTIAL_VALIDITY_DAYS: "30"
+  CUNHO_DEFERRED_INTERVAL: "5"
+  CUNHO_DISPLAY_NAME: FOAAP demo issuer
+
+services:
+  init:
+    image: cunho-demo:local
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    command: ["python", "tools/deploy_init.py", "/secrets", "/softhsm", "--public", "/public"]
+    environment:
+      ISSUER_HOST: ${ISSUER_HOST:?set ISSUER_HOST}
+    volumes: [secrets:/secrets, softhsm:/softhsm, public:/public]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    network_mode: none
+
+  cunho-pid:
+    <<: *cunho
+    command:
+      - sh
+      - -c
+      - >-
+        CUNHO_ADMIN_TOKEN=$$(cat /secrets/pid-admin-token) exec uvicorn --factory cunho.app:create_app
+        --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips '*' --no-access-log
+    environment:
+      <<: *cunho-env
+      CUNHO_ISSUER_URL: https://${ISSUER_HOST:?set ISSUER_HOST}/pid
+      CUNHO_SIGNING_KEY: pkcs11:token=cunho-pid;object=signing
+      CUNHO_MDOC_SIGNING_KEY: pkcs11:token=cunho-pid;object=mdoc
+      CUNHO_ACCESS_SIGNING_KEY: pkcs11:token=cunho-pid;object=access
+      CUNHO_PKCS11_PIN_FILE: /secrets/pid-pin
+      CUNHO_SECRET_KEY_FILE: /secrets/pid-master.key
+      CUNHO_SIGNER_CERTIFICATE_URL: https://${ISSUER_HOST}/pid/certs/signer.pem
+      CUNHO_MDOC_SIGNER_CERTIFICATE_URL: https://${ISSUER_HOST}/pid/certs/mdoc-signer.pem
+      # The login screens' origin is the page's: their forms are refused from any other.
+      CUNHO_LOGIN_URL: ${DEMO_PUBLIC_URL:-https://${DEMO_HOST:?set DEMO_HOST}}/login/pid
+    volumes: [secrets:/secrets:ro, softhsm:/softhsm, pid-data:/data]
+
+  cunho-course:
+    <<: *cunho
+    command:
+      - sh
+      - -c
+      - >-
+        CUNHO_ADMIN_TOKEN=$$(cat /secrets/course-admin-token) exec uvicorn --factory cunho.app:create_app
+        --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips '*' --no-access-log
+    environment:
+      <<: *cunho-env
+      CUNHO_PROFILE: eaa_provider
+      CUNHO_METADATA_DIR: /app/demo/metadata/course
+      CUNHO_PUBLISHED_CONFIGURATIONS: app.foaap.course_certificate_sd_jwt,app.foaap.course_certificate_mdoc
+      CUNHO_ISSUER_URL: https://${ISSUER_HOST}/course
+      CUNHO_SIGNING_KEY: pkcs11:token=cunho-course;object=signing
+      CUNHO_MDOC_SIGNING_KEY: pkcs11:token=cunho-course;object=mdoc
+      CUNHO_ACCESS_SIGNING_KEY: pkcs11:token=cunho-course;object=access
+      CUNHO_PKCS11_PIN_FILE: /secrets/course-pin
+      CUNHO_SECRET_KEY_FILE: /secrets/course-master.key
+      CUNHO_SIGNER_CERTIFICATE_URL: https://${ISSUER_HOST}/course/certs/signer.pem
+      CUNHO_MDOC_SIGNER_CERTIFICATE_URL: https://${ISSUER_HOST}/course/certs/mdoc-signer.pem
+      CUNHO_LOGIN_URL: ${DEMO_PUBLIC_URL:-https://${DEMO_HOST}}/login/course
+      # The course certificate only, never the PID: a wallet that sends no DPoP proof (Sphereon) gets a Bearer
+      # token (docs/operations.md).
+      CUNHO_ACCEPT_BEARER_TOKENS: "1"
+      # and one that sends its key proof in the earlier drafts' singular `proof` (docs/operations.md).
+      CUNHO_ACCEPT_SINGULAR_PROOF: "1"
+    volumes: [secrets:/secrets:ro, softhsm:/softhsm, course-data:/data]
+
+  demo:
+    <<: *hardened
+    image: cunho-demo:local
+    command:
+      - uvicorn
+      - --factory
+      - cunho_demo.app:create_app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --proxy-headers
+      - --forwarded-allow-ips
+      - "*"
+      - --no-access-log
+    environment:
+      DEMO_PUBLIC_URL: ${DEMO_PUBLIC_URL:-https://${DEMO_HOST}}
+      DEMO_PID_ADMIN_URL: http://cunho-pid:8000/pid
+      DEMO_PID_ADMIN_TOKEN_FILE: /secrets/pid-admin-token
+      DEMO_COURSE_ADMIN_URL: http://cunho-course:8000/course
+      DEMO_COURSE_ADMIN_TOKEN_FILE: /secrets/course-admin-token
+      DEMO_SECRET_KEY_FILE: /secrets/demo-secret.key
+      DEMO_OPERATOR_PASSWORD_FILE: /secrets/operator-password
+      # The demo wallet's key-attestation signer: the development PKI's wallet provider, which the issuers trust
+      # as long as WALLET_PROVIDER_ANCHORS keeps it (docs/DEMO.md). Remove both lines for no demo wallet.
+      DEMO_WALLET_KA_CHAIN_FILE: /secrets/pki/m3/ka-signer.pem
+      DEMO_WALLET_KA_KEY_FILE: /secrets/pki/m3/ka-signer.key
+    volumes: [secrets:/secrets:ro]
+    depends_on: [cunho-pid, cunho-course]
+
+  caddy:
+    image: caddy:2.11.9@sha256:0c2243efcf437ab7f7a978f1027fcf0d4f9be8a75df27b1b3fbc5dbe0ffa8cf0
+    restart: unless-stopped
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: ["no-new-privileges:true"]
+    read_only: true
+    ports: ["${HTTPS_PORT:-443}:${HTTPS_PORT:-443}", "${HTTP_PORT:-80}:80"]
+    environment:
+      ISSUER_HOST: ${ISSUER_HOST}
+      DEMO_HOST: ${DEMO_HOST}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../demo/metadata/course/type_metadata:/srv/type_metadata:ro
+      - public:/srv/public:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [internal, edge]
+    logging: *logging
+    depends_on: [demo]
+
+networks:
+  internal:
+    internal: true
+  edge:
+    # IPv6 as well as IPv4, so a visitor's own IPv6 address reaches Caddy. On a network without it Docker's proxy
+    # takes every IPv6 connection and hands it on from the bridge's IPv4 address: all IPv6 visitors then count as
+    # one client for every rate limit and for the console's wrong-password lockout.
+    enable_ipv6: true
+
+volumes:
+  public: {}
+  secrets: {}
+  softhsm: {}
+  pid-data: {}
+  course-data: {}
+  caddy-data: {}
+  caddy-config: {}

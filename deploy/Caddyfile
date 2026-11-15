@@ -1,0 +1,100 @@
+# TLS in front of the demo stack. ISSUER_HOST serves both issuers, each under its path; DEMO_HOST the page, the
+# login screens and the operator console. No access log: cunho promises never to record who fetched a status list.
+{
+	admin off
+	# Without an access log Caddy still writes a line, with the client's address, the address it asked for and its
+	# headers, when a request cannot be passed on (a service that is away) and when an answer is cut short (a
+	# service that stops half way, a visitor who leaves). Those two loggers stay out of the log, like the access log.
+	log {
+		exclude http.log.error http.handlers.reverse_proxy
+	}
+	servers {
+		# The compose file publishes TCP only, so HTTP/3, which needs UDP, is not offered.
+		protocols h1 h2
+		# A request's headers and body must arrive in time: a connection fed a trickle of bytes is closed, not held.
+		timeouts {
+			read_header 10s
+			read_body 30s
+			idle 2m
+		}
+	}
+}
+
+(tls_policy) {
+	# TLS 1.3, or 1.2 with the suites BCP 195 recommends (RFC 9325 §4.2), as HAIP and FAPI 2.0 §5.2.2 take.
+	tls {
+		protocols tls1.2 tls1.3
+		ciphers TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	}
+}
+
+(headers) {
+	# On everything this host answers, the files Caddy serves and its own 404s included. Set at once, so that an
+	# answer Caddy writes after these lines without passing through them again has them: the error for a file asked
+	# for with another method or for a service that is away, the empty answer when a service switches protocols
+	# unasked.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+	}
+	# And set again as the response is written, so a header the application sent is replaced, not sent twice.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		defer
+	}
+}
+
+{$ISSUER_HOST} {
+	import tls_policy
+	import headers
+	# What Caddy refuses before it reaches the lines above (a method name too long to be one) is an error too, and
+	# is answered here: with the same headers.
+	handle_errors {
+		import headers
+	}
+	# Exclusive blocks, tried in this order: respond would otherwise run before reverse_proxy whatever the order.
+	# The operator API stays on the internal network, where only the demo service reaches it.
+	@admin path /pid/admin /pid/admin/* /course/admin /course/admin/*
+	handle @admin {
+		respond 404
+	}
+	# The IACA's CRL, at the distribution point the mdoc document signer names.
+	handle /crl/iaca.crl {
+		root * /srv/public
+		rewrite * /iaca.crl
+		header Content-Type application/pkix-crl
+		file_server
+	}
+	@pid path /pid /pid/* /.well-known/openid-credential-issuer/pid /.well-known/oauth-authorization-server/pid
+	handle @pid {
+		reverse_proxy cunho-pid:8000
+	}
+	@course path /course /course/* /.well-known/openid-credential-issuer/course /.well-known/oauth-authorization-server/course
+	handle @course {
+		reverse_proxy cunho-course:8000
+	}
+	handle {
+		respond 404
+	}
+}
+
+{$DEMO_HOST} {
+	import tls_policy
+	import headers
+	# As on the issuers' host: what is refused before the lines above goes out with the headers too.
+	handle_errors {
+		import headers
+	}
+	# The course certificate's Type Metadata, byte for byte (vct#integrity is its digest). Its vct names foaap.app:
+	# this answers it when DEMO_HOST is that host, or when the site there rewrites /vct/* here (docs/DEMO.md).
+	handle /vct/course-certificate/1 {
+		root * /srv/type_metadata
+		rewrite * /course-certificate-1.json
+		header Content-Type application/json
+		file_server
+	}
+	handle {
+		reverse_proxy demo:8000
+	}
+}

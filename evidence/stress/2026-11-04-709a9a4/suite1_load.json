@@ -1,0 +1,271 @@
+{
+  "suite": "suite1_load",
+  "passed": 11,
+  "failed": 0,
+  "total": 11,
+  "ok": true,
+  "duration_s": 37.3,
+  "meta": {
+    "1w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 20,
+          "succeeded": 20,
+          "error_rate": 0.0,
+          "throughput_rps": 224.2,
+          "elapsed_s": 0.09,
+          "latency_ms": {
+            "p50": 57.88,
+            "p95": 64.41,
+            "p99": 65.33
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 100,
+          "succeeded": 100,
+          "error_rate": 0.0,
+          "throughput_rps": 446.71,
+          "elapsed_s": 0.22,
+          "latency_ms": {
+            "p50": 94.38,
+            "p95": 117.86,
+            "p99": 119.58
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 100,
+          "flows": 200,
+          "succeeded": 200,
+          "error_rate": 0.0,
+          "throughput_rps": 427.1,
+          "elapsed_s": 0.47,
+          "latency_ms": {
+            "p50": 194.05,
+            "p95": 233.83,
+            "p99": 237.67
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 200,
+          "flows": 400,
+          "succeeded": 400,
+          "error_rate": 0.0,
+          "throughput_rps": 435.74,
+          "elapsed_s": 0.92,
+          "latency_ms": {
+            "p50": 356.33,
+            "p95": 443.86,
+            "p99": 449.92
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 144.5,
+      "rss_samples": [
+        [
+          0.5,
+          105.28125
+        ],
+        [
+          1.0,
+          141.953125
+        ],
+        [
+          1.5,
+          144.53125
+        ]
+      ]
+    },
+    "4w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 20,
+          "succeeded": 20,
+          "error_rate": 0.0,
+          "throughput_rps": 119.01,
+          "elapsed_s": 0.17,
+          "latency_ms": {
+            "p50": 97.6,
+            "p95": 130.77,
+            "p99": 131.87
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 100,
+          "succeeded": 100,
+          "error_rate": 0.0,
+          "throughput_rps": 245.63,
+          "elapsed_s": 0.41,
+          "latency_ms": {
+            "p50": 152.99,
+            "p95": 260.05,
+            "p99": 267.93
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 100,
+          "flows": 200,
+          "succeeded": 200,
+          "error_rate": 0.0,
+          "throughput_rps": 257.59,
+          "elapsed_s": 0.78,
+          "latency_ms": {
+            "p50": 321.91,
+            "p95": 424.9,
+            "p99": 459.95
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 200,
+          "flows": 400,
+          "succeeded": 400,
+          "error_rate": 0.0,
+          "throughput_rps": 258.68,
+          "elapsed_s": 1.55,
+          "latency_ms": {
+            "p50": 569.76,
+            "p95": 1015.21,
+            "p99": 1039.16
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 393.7,
+      "rss_samples": [
+        [
+          0.5,
+          333.4375
+        ],
+        [
+          1.0,
+          354.59375
+        ],
+        [
+          1.5,
+          389.5
+        ],
+        [
+          2.0,
+          392.9375
+        ],
+        [
+          2.5,
+          393.734375
+        ]
+      ]
+    },
+    "status_mass_revocation": {
+      "polls_per_s": 5206.7,
+      "metadata_ms": {
+        "p50": 1.72,
+        "p95": 2.84,
+        "p99": 4.21
+      }
+    }
+  },
+  "checks": [
+    {
+      "check": "1w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 224.2,
+      "p95_ms": 64.41,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 446.71,
+      "p95_ms": 117.86,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=100: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 427.1,
+      "p95_ms": 233.83,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=200: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 435.74,
+      "p95_ms": 443.86,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 144.5
+    },
+    {
+      "check": "4w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 119.01,
+      "p95_ms": 130.77,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 245.63,
+      "p95_ms": 260.05,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=100: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 257.59,
+      "p95_ms": 424.9,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=200: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 258.68,
+      "p95_ms": 1015.21,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 393.7
+    },
+    {
+      "check": "status with 100,000 hidden bits, 8 pollers: no failure, over 100 polls/s, metadata p95 < 250 ms",
+      "pass": true,
+      "polls_per_s": 5206.7,
+      "metadata_ms": {
+        "p50": 1.72,
+        "p95": 2.84,
+        "p99": 4.21
+      },
+      "failures": 0
+    }
+  ]
+}

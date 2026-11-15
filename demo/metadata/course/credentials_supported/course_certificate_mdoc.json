@@ -1,0 +1,284 @@
+{
+  "app.foaap.course_certificate_mdoc": {
+    "format": "mso_mdoc",
+    "doctype": "app.foaap.course_certificate.1",
+    "scope": "app.foaap.course_certificate_mdoc",
+    "cryptographic_binding_methods_supported": [
+      "cose_key"
+    ],
+    "credential_signing_alg_values_supported": [
+      -7
+    ],
+    "proof_types_supported": {
+      "jwt": {
+        "proof_signing_alg_values_supported": [
+          "ES256"
+        ]
+      }
+    },
+    "credential_metadata": {
+      "display": [
+        {
+          "name": "Course certificate (mdoc)",
+          "locale": "en",
+          "description": "A certificate of completion of an online course",
+          "background_color": "#1f3a5f",
+          "text_color": "#ffffff"
+        },
+        {
+          "name": "Certificado de curso (mdoc)",
+          "locale": "pt-PT",
+          "description": "Um certificado de conclusão de um curso online",
+          "background_color": "#1f3a5f",
+          "text_color": "#ffffff"
+        }
+      ],
+      "credential_reuse_policy": {
+        "id": "arf_annex_ii",
+        "options": [
+          {
+            "details": [
+              "limited_time"
+            ],
+            "reissue_trigger_lifetime_left": 604800
+          }
+        ]
+      },
+      "claims": [
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "family_name"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Family name",
+              "locale": "en"
+            },
+            {
+              "name": "Apelido",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "given_name"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Given name",
+              "locale": "en"
+            },
+            {
+              "name": "Nome próprio",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "achievement_title"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Course",
+              "locale": "en"
+            },
+            {
+              "name": "Curso",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "achievement_description"
+          ],
+          "mandatory": false,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Description",
+              "locale": "en"
+            },
+            {
+              "name": "Descrição",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "learning_outcomes"
+          ],
+          "mandatory": false,
+          "display": [
+            {
+              "name": "Learning outcomes",
+              "locale": "en"
+            },
+            {
+              "name": "Resultados de aprendizagem",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "assessment_grade"
+          ],
+          "mandatory": false,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Grade",
+              "locale": "en"
+            },
+            {
+              "name": "Classificação",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "language_of_classes"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Language of the course",
+              "locale": "en"
+            },
+            {
+              "name": "Língua do curso",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "expected_study_time"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Study time",
+              "locale": "en"
+            },
+            {
+              "name": "Tempo de estudo",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "ects_credits"
+          ],
+          "mandatory": false,
+          "value_type": "uint",
+          "display": [
+            {
+              "name": "ECTS credits",
+              "locale": "en"
+            },
+            {
+              "name": "Créditos ECTS",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "level_of_learning_experience"
+          ],
+          "mandatory": false,
+          "value_type": "uint",
+          "display": [
+            {
+              "name": "EQF level",
+              "locale": "en"
+            },
+            {
+              "name": "Nível QEQ",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "course_provider"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Course provider",
+              "locale": "en"
+            },
+            {
+              "name": "Entidade formadora",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "course_url"
+          ],
+          "mandatory": false,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Course page",
+              "locale": "en"
+            },
+            {
+              "name": "Página do curso",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "app.foaap.course_certificate.1",
+            "date_of_completion"
+          ],
+          "mandatory": true,
+          "value_type": "full-date",
+          "display": [
+            {
+              "name": "Completed on",
+              "locale": "en"
+            },
+            {
+              "name": "Concluído em",
+              "locale": "pt-PT"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

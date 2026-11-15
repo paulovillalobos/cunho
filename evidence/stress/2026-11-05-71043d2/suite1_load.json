@@ -1,0 +1,150 @@
+{
+  "suite": "suite1_load",
+  "passed": 7,
+  "failed": 0,
+  "total": 7,
+  "ok": true,
+  "duration_s": 14.4,
+  "meta": {
+    "1w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 10,
+          "succeeded": 10,
+          "error_rate": 0.0,
+          "throughput_rps": 66.93,
+          "elapsed_s": 0.15,
+          "latency_ms": {
+            "p50": 137.45,
+            "p95": 144.25,
+            "p99": 144.25
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 50,
+          "succeeded": 50,
+          "error_rate": 0.0,
+          "throughput_rps": 160.06,
+          "elapsed_s": 0.31,
+          "latency_ms": {
+            "p50": 201.35,
+            "p95": 239.67,
+            "p99": 251.39
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 0,
+      "rss_samples": []
+    },
+    "4w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 10,
+          "succeeded": 10,
+          "error_rate": 0.0,
+          "throughput_rps": 57.61,
+          "elapsed_s": 0.17,
+          "latency_ms": {
+            "p50": 132.2,
+            "p95": 171.72,
+            "p99": 171.72
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 50,
+          "succeeded": 50,
+          "error_rate": 0.0,
+          "throughput_rps": 147.22,
+          "elapsed_s": 0.34,
+          "latency_ms": {
+            "p50": 238.01,
+            "p95": 290.54,
+            "p99": 299.78
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 334.7,
+      "rss_samples": [
+        [
+          0.5,
+          334.71875
+        ]
+      ]
+    },
+    "status_mass_revocation": {
+      "polls_per_s": 1963.8,
+      "metadata_ms": {
+        "p50": 4.07,
+        "p95": 6.77,
+        "p99": 11.3
+      }
+    }
+  },
+  "checks": [
+    {
+      "check": "1w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 66.93,
+      "p95_ms": 144.25,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 160.06,
+      "p95_ms": 239.67,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 0
+    },
+    {
+      "check": "4w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 57.61,
+      "p95_ms": 171.72,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 147.22,
+      "p95_ms": 290.54,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 334.7
+    },
+    {
+      "check": "status with 100,000 hidden bits, 8 pollers: no failure, over 100 polls/s, metadata p95 < 250 ms",
+      "pass": true,
+      "polls_per_s": 1963.8,
+      "metadata_ms": {
+        "p50": 4.07,
+        "p95": 6.77,
+        "p99": 11.3
+      },
+      "failures": 0
+    }
+  ]
+}

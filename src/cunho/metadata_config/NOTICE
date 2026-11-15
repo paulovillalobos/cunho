@@ -1,0 +1,13 @@
+The files in this directory are copied unchanged from the EU Digital Identity Wallet
+issuer reference implementation:
+
+  https://github.com/eu-digital-identity-wallet/eudi-srv-web-issuing-eudiw-py
+  commit 73de7dfec1ec72f94c80ca0951dada0aedd1c079, directory app/metadata_config
+
+  EU Digital Identity Wallet
+  Copyright (c) 2023 European Commission
+  Licensed under the Apache License, Version 2.0
+
+cunho loads them as they are so that deployments of that issuer can switch without
+rewriting their credential configurations. Values cunho does not use, or overrides
+from its own settings, are listed in DESIGN.md.

@@ -1,0 +1,119 @@
+[
+  {
+    "test-name": "oid4vci-1_0-issuer-metadata-test",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "Process Credential Issuer Metadata Response",
+    "condition": "CheckForUnexpectedParametersInCredentialIssuerMetadata",
+    "expected-result": "warning",
+    "comment": "Metadata the EUDI rules add and OpenID4VCI does not define: credential_metadata.credential_reuse_policy (ARF ISSU_39, TS 119 472-3 \u00a74.2.4), issuer_info (TS 119 472-3 \u00a74.2.3) and each claim's value_type. The suite's schema closes credential_metadata, so the first fails the whole configuration branch and the schema then reports its standard members (scope, proof_types_supported, cryptographic_binding_methods_supported) as unknown too.",
+    "plans": [
+      "haip-issuer",
+      "haip-issuer-mdoc",
+      "haip-wallet",
+      "haip-wallet-mdoc",
+      "preauth"
+    ]
+  },
+  {
+    "test-name": "oid4vci-1_0-issuer-metadata-test-signed",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "Process Credential Issuer Metadata Response",
+    "condition": "CheckForUnexpectedParametersInCredentialIssuerMetadata",
+    "expected-result": "warning",
+    "comment": "Metadata the EUDI rules add and OpenID4VCI does not define: credential_metadata.credential_reuse_policy (ARF ISSU_39, TS 119 472-3 \u00a74.2.4), issuer_info (TS 119 472-3 \u00a74.2.3) and each claim's value_type. The suite's schema closes credential_metadata, so the first fails the whole configuration branch and the schema then reports its standard members (scope, proof_types_supported, cryptographic_binding_methods_supported) as unknown too.",
+    "plans": [
+      "haip-issuer",
+      "haip-issuer-mdoc",
+      "haip-wallet",
+      "haip-wallet-mdoc",
+      "preauth"
+    ]
+  },
+  {
+    "plans": [
+      "preauth"
+    ],
+    "test-name": "oid4vci-1_0-issuer-batch-issuance",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "*",
+    "condition": "VerifyStatusListTokenSignatureUsingEmbeddedJwk",
+    "expected-result": "failure",
+    "comment": "cunho signs its status list tokens with an x5c chain, as HAIP and TS3 have it. The plan for the pre-authorized flow runs the suite's plain OpenID4VCI profile, which checks that signature only against an embedded jwk or the authorization server's jwks; the HAIP plans check the same tokens against the x5c chain and pass."
+  },
+  {
+    "plans": [
+      "preauth"
+    ],
+    "test-name": "oid4vci-1_0-issuer-fail-on-access-token-in-query",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "*",
+    "condition": "VerifyStatusListTokenSignatureUsingEmbeddedJwk",
+    "expected-result": "failure",
+    "comment": "cunho signs its status list tokens with an x5c chain, as HAIP and TS3 have it. The plan for the pre-authorized flow runs the suite's plain OpenID4VCI profile, which checks that signature only against an embedded jwk or the authorization server's jwks; the HAIP plans check the same tokens against the x5c chain and pass."
+  },
+  {
+    "plans": [
+      "preauth"
+    ],
+    "test-name": "oid4vci-1_0-issuer-happy-flow",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "*",
+    "condition": "VerifyStatusListTokenSignatureUsingEmbeddedJwk",
+    "expected-result": "failure",
+    "comment": "cunho signs its status list tokens with an x5c chain, as HAIP and TS3 have it. The plan for the pre-authorized flow runs the suite's plain OpenID4VCI profile, which checks that signature only against an embedded jwk or the authorization server's jwks; the HAIP plans check the same tokens against the x5c chain and pass."
+  },
+  {
+    "plans": [
+      "preauth"
+    ],
+    "test-name": "oid4vci-1_0-issuer-happy-flow-additional-requests",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "*",
+    "condition": "VerifyStatusListTokenSignatureUsingEmbeddedJwk",
+    "expected-result": "failure",
+    "comment": "cunho signs its status list tokens with an x5c chain, as HAIP and TS3 have it. The plan for the pre-authorized flow runs the suite's plain OpenID4VCI profile, which checks that signature only against an embedded jwk or the authorization server's jwks; the HAIP plans check the same tokens against the x5c chain and pass."
+  },
+  {
+    "plans": [
+      "preauth"
+    ],
+    "test-name": "oid4vci-1_0-issuer-happy-flow-multiple-clients",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "*",
+    "condition": "VerifyStatusListTokenSignatureUsingEmbeddedJwk",
+    "expected-result": "failure",
+    "comment": "cunho signs its status list tokens with an x5c chain, as HAIP and TS3 have it. The plan for the pre-authorized flow runs the suite's plain OpenID4VCI profile, which checks that signature only against an embedded jwk or the authorization server's jwks; the HAIP plans check the same tokens against the x5c chain and pass."
+  },
+  {
+    "plans": [
+      "preauth"
+    ],
+    "test-name": "oid4vci-1_0-issuer-happy-flow-skip-notification",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "*",
+    "condition": "VerifyStatusListTokenSignatureUsingEmbeddedJwk",
+    "expected-result": "failure",
+    "comment": "cunho signs its status list tokens with an x5c chain, as HAIP and TS3 have it. The plan for the pre-authorized flow runs the suite's plain OpenID4VCI profile, which checks that signature only against an embedded jwk or the authorization server's jwks; the HAIP plans check the same tokens against the x5c chain and pass."
+  },
+  {
+    "test-name": "oid4vci-1_0-issuer-batch-issuance",
+    "variant": "*",
+    "configuration-filename": "*suite-config-*.json",
+    "current-block": "Verify batch issuance behavior",
+    "condition": "VCIEnsureBatchMdocCredentialDatasetsMatch",
+    "expected-result": "failure",
+    "comment": "Each mdoc of a batch carries its own document_number in org.iso.23220.1: ETSI TS 119 472-1 EAA-6.2.3-01 makes it the attestation's unique identifier, and cunho draws it at random for each attestation (128 bits, PRIV.UNIQUE_ELEMENTS_CSPRNG), as it does salts and status indexes, so the copies of a batch cannot be linked by it when presented to different relying parties, which is what a batch is for. The subject's data elements are the same in every copy, as the suite's own comparison shows.",
+    "plans": [
+      "haip-wallet-mdoc",
+      "haip-issuer-mdoc"
+    ]
+  }
+]

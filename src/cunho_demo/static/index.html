@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="same-origin">
+<meta name="description" content="Scan a QR code with an EU Digital Identity Wallet and receive a credential from cunho, an open-source issuer.">
+<title>cunho demo · get a credential into your EU wallet</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/fonts.css">
+<link rel="stylesheet" href="/styles.css">
+<script src="/i18n.js" defer></script>
+<script src="/card.js" defer></script>
+<script src="/app.js" defer></script>
+</head>
+<body class="home">
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <span class="brand"><svg class="logo" viewBox="26 6 204 231" aria-hidden="true" focusable="false"><path d="M90 10H226V57H86L29 106V62Z"/><path d="M92 86H184V145H91V233H29V133L76 98H92Z"/></svg><span data-i18n="brand">FOAAP demo issuer</span></span>
+    <nav class="topnav">
+      <div class="segmented mode" role="radiogroup" aria-label="View">
+        <label><input type="radio" name="mode" value="simple" checked><span data-i18n="mode_simple">Simple</span></label>
+        <label><input type="radio" name="mode" value="advanced"><span data-i18n="mode_advanced">Advanced</span></label>
+      </div>
+      <a href="#how" data-i18n="nav_how">How it works</a>
+      <button type="button" class="pill-button" id="language" lang="pt" data-i18n="language">Português</button>
+    </nav>
+  </div>
+</header>
+
+<main class="shell">
+  <div class="workspace">
+    <section class="panel" id="choose" aria-labelledby="choose-title">
+      <p class="eyebrow"><span class="simple-only" data-i18n="eyebrow">Live demo · no app needed</span><span class="advanced-only" data-i18n="eyebrow_advanced">EU Digital Identity Wallet · OpenID4VCI</span></p>
+      <h1 data-i18n="title">Put a credential in your EU wallet.</h1>
+      <p class="lead" data-i18n="lead">Pick a credential and scan the code with your EU wallet app. No wallet? The demo wallet takes it right here, in your browser.</p>
+      <h2 id="choose-title" class="visually-hidden" data-i18n="choose_title">Choose a credential</h2>
+      <div class="creds" role="radiogroup" aria-labelledby="choose-title">
+        <label class="cred-pill"><input type="radio" name="credential" value="pid" checked><span data-i18n="cred_pid">Person identification</span></label>
+        <label class="cred-pill"><input type="radio" name="credential" value="course"><span data-i18n="course_title">Course certificate</span></label>
+      </div>
+      <p class="cred-desc" id="cred-desc"></p>
+
+      <div class="receive">
+        <h3 data-i18n="receive_title">What goes into it</h3>
+        <ul class="fields" id="fields-pid">
+          <li data-i18n="claim_given_name">Given name</li>
+          <li data-i18n="claim_family_name">Family name</li>
+          <li data-i18n="claim_birthdate">Date of birth</li>
+          <li data-i18n="claim_place_of_birth">Place of birth</li>
+          <li data-i18n="claim_nationalities">Nationality</li>
+          <li data-i18n="claim_issuing_country">Issuing country</li>
+        </ul>
+        <ul class="fields" id="fields-course" hidden>
+          <li data-i18n="claim_achievement_title">Course</li>
+          <li data-i18n="claim_assessment_grade">Grade</li>
+          <li data-i18n="claim_ects_credits">ECTS credits</li>
+          <li data-i18n="claim_level_of_learning_experience">EQF level</li>
+          <li data-i18n="claim_course_provider">Course provider</li>
+          <li data-i18n="claim_learning_outcomes">Learning outcomes</li>
+        </ul>
+      </div>
+
+      <div class="settings">
+        <fieldset class="setting">
+          <legend data-i18n="flow">How the wallet gets it</legend>
+          <div class="segmented">
+            <label><input type="radio" name="flow" value="pre-authorized_code" checked><span data-i18n="flow_pre">Straight away</span></label>
+            <label><input type="radio" name="flow" value="authorization_code"><span data-i18n="flow_code">After signing in</span></label>
+          </div>
+          <p class="hint" id="flow-hint"></p>
+        </fieldset>
+        <fieldset class="setting" id="format-options" hidden>
+          <legend data-i18n="format">Format</legend>
+          <div class="segmented">
+            <label><input type="radio" name="format" value="sd_jwt" checked><span>SD-JWT VC</span></label>
+            <label><input type="radio" name="format" value="mdoc"><span>mdoc</span></label>
+          </div>
+        </fieldset>
+        <div class="setting" id="pin-option">
+          <label class="switch">
+            <input type="checkbox" name="pin" value="true" role="switch">
+            <span class="switch-track" aria-hidden="true"></span>
+            <span class="switch-text"><span data-i18n="pin">Ask the wallet for a PIN</span><small data-i18n="pin_hint">A one-time code shown on this page, typed into the wallet.</small></span>
+          </label>
+        </div>
+      </div>
+
+      <button type="button" class="button primary" id="start" data-i18n="start">Try it now</button>
+      <p class="error" id="start-error" role="alert" hidden></p>
+      <p class="note" role="note"><strong data-i18n="demo_only">Demo only.</strong> <span data-i18n="demo_notice">The people are fictional, no identity is checked, and the card is not an official document.</span></p>
+    </section>
+
+    <aside class="panel offer" id="offer">
+      <div class="stage" id="stage">
+        <div class="flip">
+          <div class="side front" id="card-front"><div class="w-card" id="m-card" aria-hidden="true"></div></div>
+          <div class="side back" id="card-back">
+            <div class="qr" id="qr" role="img" aria-label="QR code of the credential offer"></div>
+            <div class="back-text">
+              <fieldset class="scan">
+                <legend data-i18n="scan_legend">Scan with</legend>
+                <div class="segmented">
+                  <label><input type="radio" name="scan" value="camera" checked><span data-i18n="scan_camera">Phone camera</span></label>
+                  <label><input type="radio" name="scan" value="wallet"><span data-i18n="scan_wallet">Wallet app</span></label>
+                </div>
+              </fieldset>
+              <p class="scan-hint" id="scan-hint"></p>
+              <div class="pin" id="pin" hidden>
+                <span data-i18n="pin_shown">PIN to type in your wallet</span>
+                <strong id="pin-value"></strong>
+              </div>
+              <p class="expiry" id="expiry"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="idle status" id="idle" data-i18n="idle_text">Your card appears here.</p>
+
+      <section id="issue" aria-labelledby="issue-title" hidden>
+        <h2 id="issue-title" class="visually-hidden"><span data-i18n="issue_title">Scan with your wallet</span></h2>
+
+        <!-- The phone page, drawn as a wallet: the card, what it holds (Info), what happened to it (History), and
+             the person's yes or no before anything is stored, as the ARF has a wallet ask. -->
+        <section class="wallet" id="wallet-screen" hidden>
+          <div class="w-toast" id="w-toast" role="status" hidden><span class="w-dot" aria-hidden="true"></span><span id="w-toast-text"></span></div>
+          <p class="w-demo"><span class="badge-dot" aria-hidden="true"></span><span data-i18n="w_demo">Demo wallet · fictional people</span></p>
+          <h2 class="w-title" id="w-title"></h2>
+          <div class="w-card" id="w-card" aria-hidden="true"></div>
+          <p class="w-from" id="w-from"></p>
+          <details class="w-section" id="w-info" open>
+            <summary data-i18n="w_info">Info</summary>
+            <dl class="w-rows" id="w-info-rows"></dl>
+          </details>
+          <details class="w-section" id="w-history-box">
+            <summary data-i18n="w_history">History</summary>
+            <ol class="w-history" id="w-history"></ol>
+          </details>
+          <div class="w-status" id="w-status-row" hidden>
+            <span class="list-status" id="w-status"></span>
+            <button type="button" class="link-button" id="w-check-status" data-i18n="check_status_short">Check its status</button>
+          </div>
+          <p class="w-check" id="w-check" hidden></p>
+          <label class="field" id="demo-pin" hidden><span data-i18n="demo_pin_label">The PIN shown where you made the offer</span><input id="demo-pin-value" inputmode="numeric" autocomplete="off" maxlength="8"></label>
+          <p class="w-busy" id="w-busy" hidden><span class="w-spinner" aria-hidden="true"></span><span id="w-busy-text"></span></p>
+          <p class="error" id="w-error" hidden></p>
+          <div class="w-actions" id="w-actions" hidden>
+            <button type="button" class="w-btn primary" id="w-add" data-i18n="consent_add">Add to wallet</button>
+            <button type="button" class="w-btn ghost" id="w-decline" data-i18n="consent_decline">Decline</button>
+          </div>
+          <button type="button" class="w-btn primary" id="w-again" hidden data-i18n="consent_again">Show the offer again</button>
+          <a class="w-btn primary" id="w-open" href="#" hidden data-i18n="w_open">Open in my wallet app</a>
+          <a class="w-link" id="open-wallet-phone" href="#" data-i18n="consent_real_wallet">Have an EUDI wallet app? Open the offer there</a>
+          <a class="w-link" href="/" data-i18n="w_new">Make another offer</a>
+        </section>
+        <ol class="steps" id="steps">
+          <li data-step="waiting"><span class="dot" aria-hidden="true"></span><span data-i18n="step_waiting">Waiting for your wallet</span></li>
+          <li data-step="signing_in" class="code-only"><span class="dot" aria-hidden="true"></span><span data-i18n="step_signing_in">Signing in</span></li>
+          <li data-step="connected"><span class="dot" aria-hidden="true"></span><span data-i18n="step_connected">Wallet connected</span></li>
+          <li data-step="issued"><span class="dot" aria-hidden="true"></span><span data-i18n="step_issued">Credential signed</span></li>
+          <li data-step="stored"><span class="dot" aria-hidden="true"></span><span data-i18n="step_stored">Stored in your wallet</span></li>
+        </ol>
+        <div class="outcome" id="outcome">
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+          <p class="stored-note" id="stored-note" data-i18n="stored_note" hidden>The demo wallet is one this page runs for you, and it forgets the credential after 30 minutes: it is not an app on your phone. For a real EU wallet app, start again and choose “Use my wallet app”.</p>
+        </div>
+
+        <div class="offer-actions">
+          <div class="demo-wallet" id="demo-wallet-box" hidden>
+            <button type="button" class="button" id="demo-wallet" data-i18n="demo_wallet">No wallet? Try it with the demo wallet</button>
+            <p class="hint" data-i18n="demo_wallet_hint">A wallet this demo runs for you, to show every step. Its keys stay in the demo's memory for half an hour.</p>
+          </div>
+          <div class="same-device">
+            <a class="button" id="open-wallet" href="#" data-i18n="open_wallet">Open in a wallet on this device</a>
+            <p class="hint" data-i18n="wallet_hint">Opens your wallet app, if one is installed on this device.</p>
+          </div>
+          <button type="button" class="button" id="copy-link" data-i18n="copy_link">Copy offer link</button>
+          <a class="small-link" id="phone-here" href="#" data-i18n="phone_here">Open the phone page on this computer</a>
+        </div>
+        <p class="hint" id="demo-wallet-code" data-i18n="demo_wallet_code" hidden>The demo wallet takes offers made straight away; signing in needs a real wallet.</p>
+
+        <div class="mini" id="mini">
+          <div class="cred small" id="mini-card" aria-hidden="true">
+            <span class="cred-top"><span class="cred-kind" id="mini-kind"></span><span class="seal"></span></span>
+            <span class="cred-name" id="mini-name"></span>
+            <span class="cred-bottom"><span class="cred-issuer" data-i18n="fictional_person">Fictional person</span><span class="in-wallet" data-i18n="in_wallet">In your wallet</span></span>
+          </div>
+          <p class="persona-line"><span data-i18n="for">For</span> <strong id="persona-name"></strong> <span data-i18n="fictional">(fictional)</span></p>
+          <dl class="face" id="face"></dl>
+        </div>
+
+        <p class="error simple-only" id="result-error" hidden></p>
+        <section class="result" id="result" hidden aria-labelledby="result-title">
+          <h3 id="result-title" data-i18n="result_title">What the wallet received</h3>
+          <dl class="result-rows" id="result-rows"></dl>
+          <p class="result-check" id="result-check"></p>
+          <div class="result-status">
+            <span class="list-status" id="result-status"></span>
+            <button type="button" class="link-button" id="result-check-status" data-i18n="check_status_short">Check its status</button>
+          </div>
+        </section>
+
+        <section class="wallet-box" id="wallet-box" hidden aria-labelledby="wallet-title">
+          <h3 id="wallet-title" data-i18n="wallet_title">Demo wallet</h3>
+          <ol class="wallet-steps" id="wallet-steps"></ol>
+          <p class="error" id="wallet-error" hidden></p>
+        </section>
+
+        <div class="review" id="review" hidden>
+          <p data-i18n="review_text">This issuance waits for the operator's review. Here, you are the operator.</p>
+          <div class="actions">
+            <button type="button" class="button primary" id="release" data-i18n="release">Release</button>
+            <button type="button" class="button" id="refuse" data-i18n="refuse">Refuse</button>
+          </div>
+        </div>
+        <div class="revoke" id="revoke-box" hidden>
+          <p data-i18n="revoke_text">Revoke it, and the issuer's status list says so within a minute or two: a verifier will refuse it.</p>
+          <button type="button" class="button danger" id="revoke" data-i18n="revoke">Revoke this credential</button>
+        </div>
+        <p class="hint" id="revoke-elsewhere" data-i18n="revoke_elsewhere" hidden>To revoke it, use the page where you made the offer.</p>
+        <p class="error" id="issue-error" role="alert" hidden></p>
+        <button type="button" class="button" id="again" data-i18n="again">Start again</button>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel inside" id="inside" hidden aria-labelledby="inside-title">
+    <h2 id="inside-title" data-i18n="inside_title">Inside the credential</h2>
+    <div class="inside-list" id="inside-list"></div>
+    <div class="inside-foot">
+      <button type="button" class="button" id="check-status" data-i18n="check_status">Check the status as a verifier would</button>
+      <p class="hint" id="checked-at"></p>
+      <p class="hint" id="status-note" data-i18n="status_note">A revocation shows at the issuer's next status list publication, within a minute or two.</p>
+    </div>
+  </section>
+
+  <section class="how" id="how" aria-labelledby="how-title">
+    <h2 id="how-title" data-i18n="how_title">How it works</h2>
+    <ol class="how-steps">
+      <li><span class="how-number" aria-hidden="true">1</span><strong class="advanced-only" data-i18n="how_1">Offer</strong><span class="advanced-only" data-i18n="explain_1">The page asks the issuer for a credential offer for a fictional person and shows it as a QR code.</span><strong class="simple-only" data-i18n="how_s1">Choose</strong><span class="simple-only" data-i18n="explain_s1">Pick an identity card or a course certificate, for a fictional person.</span></li>
+      <li><span class="how-number" aria-hidden="true">2</span><strong class="advanced-only" data-i18n="how_2">Token</strong><span class="advanced-only" data-i18n="explain_2">Your wallet reads the offer and the issuer's metadata, and gets an access token bound to a key only it holds (DPoP).</span><strong class="simple-only" data-i18n="how_s2">Request</strong><span class="simple-only" data-i18n="explain_s2">A wallet asks the issuer for it, with a key that only the wallet holds.</span></li>
+      <li><span class="how-number" aria-hidden="true">3</span><strong class="advanced-only" data-i18n="how_3">Proof</strong><span class="advanced-only" data-i18n="explain_3">The wallet proves it holds the key the credential will be bound to, and asks for the credential.</span><strong class="simple-only" data-i18n="how_s3">Sign</strong><span class="simple-only" data-i18n="explain_s3">The issuer checks the wallet, then signs the credential so that nobody can change it.</span></li>
+      <li><span class="how-number" aria-hidden="true">4</span><strong class="advanced-only" data-i18n="how_4">Signature</strong><span class="advanced-only" data-i18n="explain_4">The issuer signs it, gives it a place on its status list, and logs the issuance without the person's data.</span><strong class="simple-only" data-i18n="how_s4">Store</strong><span class="simple-only" data-i18n="explain_s4">The credential goes into the wallet. Here, a demo wallet this page runs for you.</span></li>
+      <li><span class="how-number" aria-hidden="true">5</span><strong class="advanced-only" data-i18n="how_5">Confirmation</strong><span class="advanced-only" data-i18n="explain_5">The wallet tells the issuer it stored the credential. This page has followed each step through the issuer's operator API.</span><strong class="simple-only" data-i18n="how_s5">Check</strong><span class="simple-only" data-i18n="explain_s5">Anyone can check that it is genuine, and the issuer can revoke it at any time.</span></li>
+    </ol>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="shell footer-grid">
+    <div><strong data-i18n="about_wallets_title">Wallets</strong><p data-i18n="about_wallets">It works with wallets that follow OpenID4VCI 1.0 and HAIP.</p></div>
+    <div><strong data-i18n="about_privacy_title">Privacy</strong><p data-i18n="about_privacy">No cookies, no analytics, nothing loaded from other sites. A session lives 30 minutes in memory and holds no personal data: the people are fictional.</p></div>
+    <div><strong data-i18n="about_cunho_title">Open source</strong><p data-i18n="about_cunho">The issuer is cunho, open source under the AGPL-3.0, built from the EU rules up.</p></div>
+  </div>
+</footer>
+</body>
+</html>

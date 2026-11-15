@@ -1,0 +1,170 @@
+{
+  "suite": "suite3_fuzz",
+  "passed": 19,
+  "failed": 0,
+  "total": 19,
+  "ok": true,
+  "duration_s": 25.5,
+  "meta": {
+    "max_examples": 400,
+    "inprocess_targets": {
+      "parse_jws": {
+        "failures": 0,
+        "sample": []
+      },
+      "strict_json": {
+        "failures": 0,
+        "sample": []
+      },
+      "parse_jws payloads": {
+        "failures": 0,
+        "sample": []
+      },
+      "public_key_from_jwk": {
+        "failures": 0,
+        "sample": []
+      },
+      "load_x5c+validate_path": {
+        "failures": 0,
+        "sample": []
+      },
+      "validate_path_realcerts": {
+        "failures": 0,
+        "sample": []
+      },
+      "load_x5c+validate_path (changed DER)": {
+        "failures": 0,
+        "sample": []
+      },
+      "validate_subject": {
+        "failures": 0,
+        "sample": []
+      },
+      "validate_pid": {
+        "failures": 0,
+        "sample": []
+      },
+      "metadata.validate": {
+        "failures": 0,
+        "sample": []
+      },
+      "status.encoded": {
+        "failures": 0,
+        "sample": []
+      }
+    },
+    "http_failures": {}
+  },
+  "checks": [
+    {
+      "check": "inprocess:parse_jws: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:strict_json: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:parse_jws payloads: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:public_key_from_jwk: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:load_x5c+validate_path: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:validate_path_realcerts: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:load_x5c+validate_path (changed DER): no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:validate_subject: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:validate_pid: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:metadata.validate: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess:status.encoded: no unhandled exception / no hang",
+      "pass": true,
+      "examples": 400,
+      "failures": 0,
+      "first": null
+    },
+    {
+      "check": "inprocess: traced memory peak < 512 MB",
+      "pass": true,
+      "peak_mb": 79.1
+    },
+    {
+      "check": "http:/admin/offers: no 5xx / no hang",
+      "pass": true
+    },
+    {
+      "check": "http:/credential: no 5xx / no hang",
+      "pass": true
+    },
+    {
+      "check": "http:/credential key attestation with changed certificate bytes: no 5xx / no hang",
+      "pass": true
+    },
+    {
+      "check": "http:/credential signed key-proof claims: no 5xx / no hang",
+      "pass": true
+    },
+    {
+      "check": "http:/status: no 5xx / no hang",
+      "pass": true
+    },
+    {
+      "check": "http:/token: no 5xx / no hang",
+      "pass": true
+    },
+    {
+      "check": "http:/token signed DPoP claims: no 5xx / no hang",
+      "pass": true
+    }
+  ]
+}

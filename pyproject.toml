@@ -1,0 +1,64 @@
+[project]
+name = "cunho"
+version = "0.1.0"
+description = "Open-source credential issuer for the EU Digital Identity Wallet"
+license = "AGPL-3.0-only"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "httpx>=0.27",
+    "cryptography>=43",
+    "cbor2>=6.2.0.post2",
+]
+
+[project.optional-dependencies]
+# Signing keys in an HSM (PKCS#11) or in AWS KMS; a development run signs with PEM files and needs neither.
+pkcs11 = ["python-pkcs11>=0.7"]
+kms = ["boto3>=1.34"]
+# A PostgreSQL store for workers on several hosts; a single host runs on SQLite and needs nothing.
+postgres = ["psycopg[binary]>=3.2"]
+# The public demo's service (src/cunho_demo): QR codes for its offers.
+demo = ["segno>=1.6"]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cunho", "src/cunho_demo"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11", "hypothesis>=6.100", "python-pkcs11>=0.7", "boto3>=1.34", "psycopg[binary]>=3.2", "segno>=1.6"]
+stress = ["hypothesis>=6.100", "psutil>=5.9"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["binder/src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP", "I"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+exclude = ["^tools/oidf/_"]  # the OIDF suite's checkout, venv and run files (tools/oidf/run.py)
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "probe", "."]
+testpaths = ["tests"]
+# The slow suites (exhaustive anchor faults, the model-based run across worker processes, the status load
+# test) run as their own CI job: pytest -m slow.
+addopts = "-m 'not slow'"
+markers = [
+    "slow: long-running suites, run as their own CI job with -m slow",
+    # Also registered by tests/engine/conftest.py; here too, since tests/demo imports engine tests before it loads.
+    "covers(*rules): binder rule ids whose refusals this test proves",
+    "obligation(*rules): binder rule ids whose required behaviour this test proves",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["eudi_probe", "cunho", "cunho_demo"]

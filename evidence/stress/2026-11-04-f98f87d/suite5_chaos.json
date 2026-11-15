@@ -1,0 +1,120 @@
+{
+  "suite": "suite5_chaos",
+  "passed": 20,
+  "failed": 0,
+  "total": 20,
+  "ok": true,
+  "duration_s": 47.6,
+  "meta": {},
+  "checks": [
+    {
+      "check": "kill/restart: revocation before the crash accepted",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "kill/restart: audit chain still valid",
+      "pass": true,
+      "detail": {
+        "valid": true,
+        "detail": "4 entries verified; 4 anchor lines"
+      }
+    },
+    {
+      "check": "kill/restart: revoked status survived",
+      "pass": true,
+      "before": 1,
+      "after": 1
+    },
+    {
+      "check": "kill/restart: pre-crash token still issues",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "kill/restart: fresh flow works after restart",
+      "pass": true,
+      "detail": "issued"
+    },
+    {
+      "check": "sqlite locked: issuance fails closed (no credential, clean JSON error)",
+      "pass": true,
+      "status": 500,
+      "elapsed_s": 32.2,
+      "body": "{\"error\":\"server_error\",\"error_description\":\"internal error\"}"
+    },
+    {
+      "check": "sqlite locked: audit chain valid after lock clears",
+      "pass": true,
+      "detail": {
+        "valid": true,
+        "detail": "1 entries verified; 1 anchor lines"
+      }
+    },
+    {
+      "check": "sqlite locked: fresh flow works after lock clears",
+      "pass": true,
+      "detail": "issued"
+    },
+    {
+      "check": "disk full: baseline flow issues before fault",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "disk full: issuance fails closed during credential write (no 200)",
+      "pass": true,
+      "status": 500
+    },
+    {
+      "check": "disk full: audit chain stays valid across the fault",
+      "pass": true,
+      "before": true,
+      "after": true
+    },
+    {
+      "check": "disk full on the audit write: no credential, clean JSON error",
+      "pass": true,
+      "status": 500,
+      "body": "{\"error\":\"server_error\",\"error_description\":\"audit log unavailable\"}"
+    },
+    {
+      "check": "disk full on the audit write: no new valid status slot left behind",
+      "pass": true,
+      "leaked": 0
+    },
+    {
+      "check": "disk full on the audit write: audit chain still valid",
+      "pass": true
+    },
+    {
+      "check": "disk full: flow works again once space is back",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "clock jumps: baseline flow issues",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "clock jumps: expired pre-auth code rejected cleanly (no 5xx)",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "check": "clock jumps: fresh flow works at the new time",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "clock jumps: backward jump does not 5xx",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "check": "clock jumps: audit chain valid after jumps",
+      "pass": true
+    }
+  ]
+}

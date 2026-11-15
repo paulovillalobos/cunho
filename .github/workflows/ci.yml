@@ -1,0 +1,208 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# check, probe and caddy run on every push. The heavy jobs (slow, mutation, races, fuzz, oidf) run nightly, on main,
+# on pull requests and by hand, through the same if on each: a push to a working branch does not wait for them,
+# and nothing reaches main without them.
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the upgrade test checks out an earlier commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update -q && sudo apt-get install -y -q softhsm2  # the HSM signer's tests (tests/engine/test_signers.py)
+      - run: pip install "fastapi>=0.115" "uvicorn>=0.30" "httpx>=0.27" "cryptography>=43" "cbor2>=6.2.0.post2" "python-pkcs11>=0.7" "boto3>=1.34" "psycopg[binary]>=3.2" "segno>=1.6" pytest ruff mypy hypothesis
+      - run: ruff check src probe tools tests
+      - run: ruff format --check src probe tools tests
+      - run: mypy src probe/eudi_probe tools tests
+        env:
+          MYPYPATH: src:probe:.
+      - run: pytest -q
+      - run: python tools/mutation/demo_mutate.py --jobs 2  # the demo service's guards, each caught by tests/demo
+
+  # The slow suites (review 5): every pair of cut points in two anchor writes, a revocation racing the
+  # issuance of both configurations of an offer across worker processes, the status endpoint with 100,000
+  # hidden bits, and a model-based run of offers, tokens, issuance, revocation, cancellation, erasure,
+  # maintenance and verify across four worker processes on one SQLite file, with the code flow's logins
+  # and refreshes and the operator's job renewing, withdrawing and rolling back the wallet providers list (M3).
+  slow:
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "fastapi>=0.115" "uvicorn>=0.30" "httpx>=0.27" "cryptography>=43" "cbor2>=6.2.0.post2" "psycopg[binary]>=3.2" pytest hypothesis
+      # The model test runs on SQLite and on PostgreSQL, whose binaries the runner image carries (tests/conftest.py).
+      - run: pytest -q -m slow tests/slow
+
+  # Switch off each rule, remove each refusal and each raise, and alter each condition that guards
+  # one; every change must make the suite fail (review 2, N-M6; review 3, N3-H1). Slow, so it runs
+  # as its own jobs: rules mode once, the full run in four shards. A survivor that is not listed in
+  # tools/mutation/equivalent.py, with its reason, fails the job.
+  mutation-rules:
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the upgrade test checks out an earlier commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update -q && sudo apt-get install -y -q softhsm2  # the HSM signer's tests (tests/engine/test_signers.py)
+      - run: pip install "fastapi>=0.115" "uvicorn>=0.30" "httpx>=0.27" "cryptography>=43" "cbor2>=6.2.0.post2" "python-pkcs11>=0.7" "boto3>=1.34" "psycopg[binary]>=3.2" pytest hypothesis
+      - run: python tools/mutation/mutate.py --jobs 2 --json mutation-rules.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-rules
+          path: mutation-rules.json
+
+  mutation:
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the upgrade test checks out an earlier commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update -q && sudo apt-get install -y -q softhsm2  # the HSM signer's tests (tests/engine/test_signers.py)
+      - run: pip install "fastapi>=0.115" "uvicorn>=0.30" "httpx>=0.27" "cryptography>=43" "cbor2>=6.2.0.post2" "python-pkcs11>=0.7" "boto3>=1.34" "psycopg[binary]>=3.2" pytest hypothesis
+      - run: python tools/mutation/mutate.py --all --select --shard ${{ matrix.shard }}/4 --jobs 2 --json mutation-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-${{ matrix.shard }}
+          path: mutation-${{ matrix.shard }}.json
+
+  # The multi-process race suite: a real 4-worker uvicorn on one SQLite file, localhost only. Its
+  # atomicity checks are the only ones that see a non-atomic SQLite operation across processes.
+  races:
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "fastapi>=0.115" "uvicorn>=0.30" "httpx>=0.27" "cryptography>=43" "cbor2>=6.2.0.post2" hypothesis psutil
+      - run: python tools/stress/run_all.py . --quick --suites 2 --out stress-races
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stress-races
+          path: stress-races
+
+  # The fuzz suite: every endpoint, the code flow's signed inputs and the wallet providers list parser,
+  # against a real uvicorn on localhost. No 5xx, no hang.
+  fuzz:
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "fastapi>=0.115" "uvicorn>=0.30" "httpx>=0.27" "cryptography>=43" "cbor2>=6.2.0.post2" hypothesis psutil
+      - run: python tools/stress/run_all.py . --quick --suites 3 --out stress-fuzz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stress-fuzz
+          path: stress-fuzz
+
+  # The probe against a local cunho over TLS, with the code flow's test login: every check passes or skips with
+  # its reason, and every check of M3 passes.
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "fastapi>=0.115" "uvicorn>=0.30" "httpx>=0.27" "cryptography>=43" "cbor2>=6.2.0.post2"
+      - run: python tools/probe_local.py probe-local
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe-local
+          path: |
+            probe-local/pre-authorized
+            probe-local/code-flow-offer
+
+  # What Caddy is told, tried on a running Caddy, in docker on the runner: the Caddy the compose file pins on the
+  # stack's Caddyfile, with nothing behind it and then with a stand-in for the services. Every answer of the two
+  # hosts carries the two headers once each, and Caddy writes no line about a request to its log. The tool that
+  # tries it is then tried itself, on two Caddyfiles that do not hold: of each it has to end in 1 and name the
+  # loss the step is called after.
+  caddy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python tools/try_caddy.py --pull
+      - name: An error that goes out without the two headers is told
+        run: |
+          sed '/^\t\timport headers$/d' deploy/Caddyfile > "$RUNNER_TEMP/Caddyfile"
+          if cmp -s deploy/Caddyfile "$RUNNER_TEMP/Caddyfile"; then echo "nothing was taken out"; exit 1; fi
+          code=0; python tools/try_caddy.py --caddyfile "$RUNNER_TEMP/Caddyfile" > "$RUNNER_TEMP/said" || code=$?
+          cat "$RUNNER_TEMP/said"
+          test "$code" -eq 1
+          grep -q "strict-transport-security 0 times" "$RUNNER_TEMP/said"
+          grep -q "^It does not hold: .* not carry the two headers as they must" "$RUNNER_TEMP/said"
+      - name: A line that Caddy writes about a request is told
+        run: |
+          sed '/exclude http.log.error http.handlers.reverse_proxy/d' deploy/Caddyfile > "$RUNNER_TEMP/Caddyfile"
+          if cmp -s deploy/Caddyfile "$RUNNER_TEMP/Caddyfile"; then echo "nothing was taken out"; exit 1; fi
+          code=0; python tools/try_caddy.py --caddyfile "$RUNNER_TEMP/Caddyfile" > "$RUNNER_TEMP/said" || code=$?
+          cat "$RUNNER_TEMP/said"
+          test "$code" -eq 1
+          grep -q "^It does not hold: Caddy wrote" "$RUNNER_TEMP/said"
+
+  # The OpenID Foundation's conformance suite against cunho built from this commit, in docker on the runner: the
+  # HAIP plans for SD-JWT VC and for mdoc, wallet- and issuer-initiated, with their encrypted variants, and the
+  # pre-authorized plan. Every module passes apart from the ones listed with their reason in
+  # tools/oidf/expected-failures.json; none is expected to be skipped.
+  oidf:
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "cryptography>=43"
+      - run: python tools/oidf/run.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: oidf-results
+          path: tools/oidf/_work/results

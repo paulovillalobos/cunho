@@ -1,0 +1,255 @@
+{
+  "vct": "https://foaap.app/vct/course-certificate/1",
+  "name": "Course certificate",
+  "description": "A certificate that a person completed an online course, issued by the course provider. Fields follow the European Learning Model as the EU learning credential uses it.",
+  "display": [
+    {
+      "locale": "en",
+      "name": "Course certificate",
+      "description": "Completion of an online course",
+      "rendering": {
+        "simple": {
+          "background_color": "#1f3a5f",
+          "text_color": "#ffffff"
+        }
+      }
+    },
+    {
+      "locale": "pt-PT",
+      "name": "Certificado de curso",
+      "description": "Conclusão de um curso online",
+      "rendering": {
+        "simple": {
+          "background_color": "#1f3a5f",
+          "text_color": "#ffffff"
+        }
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": [
+        "family_name"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Family name"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Apelido"
+        }
+      ]
+    },
+    {
+      "path": [
+        "given_name"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Given name"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Nome próprio"
+        }
+      ]
+    },
+    {
+      "path": [
+        "achievement_title"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Course"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Curso"
+        }
+      ]
+    },
+    {
+      "path": [
+        "achievement_description"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Description"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Descrição"
+        }
+      ]
+    },
+    {
+      "path": [
+        "learning_outcomes"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Learning outcomes"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Resultados de aprendizagem"
+        }
+      ]
+    },
+    {
+      "path": [
+        "assessment_grade"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Grade"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Classificação"
+        }
+      ]
+    },
+    {
+      "path": [
+        "language_of_classes"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Language of the course"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Língua do curso"
+        }
+      ]
+    },
+    {
+      "path": [
+        "expected_study_time"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Study time"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Tempo de estudo"
+        }
+      ]
+    },
+    {
+      "path": [
+        "ects_credits"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "ECTS credits"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Créditos ECTS"
+        }
+      ]
+    },
+    {
+      "path": [
+        "level_of_learning_experience"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "EQF level"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Nível QEQ"
+        }
+      ]
+    },
+    {
+      "path": [
+        "course_provider"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Course provider"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Entidade formadora"
+        }
+      ]
+    },
+    {
+      "path": [
+        "course_url"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Course page"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Página do curso"
+        }
+      ]
+    },
+    {
+      "path": [
+        "date_of_completion"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Completed on"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Concluído em"
+        }
+      ]
+    },
+    {
+      "path": [
+        "date_of_issuance"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Issued on"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Emitido em"
+        }
+      ]
+    }
+  ]
+}

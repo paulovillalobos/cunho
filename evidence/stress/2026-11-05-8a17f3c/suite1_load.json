@@ -1,0 +1,323 @@
+{
+  "suite": "suite1_load",
+  "passed": 11,
+  "failed": 0,
+  "total": 11,
+  "ok": true,
+  "duration_s": 45.1,
+  "meta": {
+    "1w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 20,
+          "succeeded": 20,
+          "error_rate": 0.0,
+          "throughput_rps": 107.2,
+          "elapsed_s": 0.19,
+          "latency_ms": {
+            "p50": 112.02,
+            "p95": 132.51,
+            "p99": 133.63
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 100,
+          "succeeded": 100,
+          "error_rate": 0.0,
+          "throughput_rps": 181.62,
+          "elapsed_s": 0.55,
+          "latency_ms": {
+            "p50": 249.8,
+            "p95": 283.0,
+            "p99": 363.37
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 100,
+          "flows": 200,
+          "succeeded": 200,
+          "error_rate": 0.0,
+          "throughput_rps": 164.36,
+          "elapsed_s": 1.22,
+          "latency_ms": {
+            "p50": 530.57,
+            "p95": 613.5,
+            "p99": 740.51
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 200,
+          "flows": 400,
+          "succeeded": 400,
+          "error_rate": 0.0,
+          "throughput_rps": 144.83,
+          "elapsed_s": 2.76,
+          "latency_ms": {
+            "p50": 1218.17,
+            "p95": 1360.83,
+            "p99": 1383.88
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 147.7,
+      "rss_samples": [
+        [
+          0.5,
+          87.875
+        ],
+        [
+          1.0,
+          105.78125
+        ],
+        [
+          1.5,
+          107.640625
+        ],
+        [
+          2.1,
+          109.734375
+        ],
+        [
+          2.6,
+          144.515625
+        ],
+        [
+          3.1,
+          145.8125
+        ],
+        [
+          3.6,
+          147.21875
+        ],
+        [
+          4.1,
+          147.53125
+        ],
+        [
+          4.6,
+          147.6875
+        ]
+      ]
+    },
+    "4w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 20,
+          "succeeded": 20,
+          "error_rate": 0.0,
+          "throughput_rps": 46.15,
+          "elapsed_s": 0.43,
+          "latency_ms": {
+            "p50": 257.8,
+            "p95": 346.39,
+            "p99": 379.95
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 100,
+          "succeeded": 100,
+          "error_rate": 0.0,
+          "throughput_rps": 117.72,
+          "elapsed_s": 0.85,
+          "latency_ms": {
+            "p50": 379.9,
+            "p95": 442.91,
+            "p99": 473.2
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 100,
+          "flows": 200,
+          "succeeded": 200,
+          "error_rate": 0.0,
+          "throughput_rps": 119.35,
+          "elapsed_s": 1.68,
+          "latency_ms": {
+            "p50": 653.29,
+            "p95": 1039.46,
+            "p99": 1112.88
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 200,
+          "flows": 400,
+          "succeeded": 400,
+          "error_rate": 0.0,
+          "throughput_rps": 117.1,
+          "elapsed_s": 3.42,
+          "latency_ms": {
+            "p50": 1282.83,
+            "p95": 2130.61,
+            "p99": 2231.32
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 397.3,
+      "rss_samples": [
+        [
+          0.5,
+          332.65625
+        ],
+        [
+          1.0,
+          336.953125
+        ],
+        [
+          1.5,
+          355.5
+        ],
+        [
+          2.0,
+          357.5
+        ],
+        [
+          2.6,
+          358.046875
+        ],
+        [
+          3.1,
+          358.90625
+        ],
+        [
+          3.6,
+          394.234375
+        ],
+        [
+          4.1,
+          395.484375
+        ],
+        [
+          4.6,
+          396.4375
+        ],
+        [
+          5.1,
+          396.703125
+        ],
+        [
+          5.6,
+          397.0625
+        ],
+        [
+          6.1,
+          397.265625
+        ]
+      ]
+    },
+    "status_mass_revocation": {
+      "polls_per_s": 2028.9,
+      "metadata_ms": {
+        "p50": 2.89,
+        "p95": 4.06,
+        "p99": 5.22
+      }
+    }
+  },
+  "checks": [
+    {
+      "check": "1w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 107.2,
+      "p95_ms": 132.51,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 181.62,
+      "p95_ms": 283.0,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=100: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 164.36,
+      "p95_ms": 613.5,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=200: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 144.83,
+      "p95_ms": 1360.83,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 147.7
+    },
+    {
+      "check": "4w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 46.15,
+      "p95_ms": 346.39,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 117.72,
+      "p95_ms": 442.91,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=100: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 119.35,
+      "p95_ms": 1039.46,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=200: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 117.1,
+      "p95_ms": 2130.61,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 397.3
+    },
+    {
+      "check": "status with 100,000 hidden bits, 8 pollers: no failure, over 100 polls/s, metadata p95 < 250 ms",
+      "pass": true,
+      "polls_per_s": 2028.9,
+      "metadata_ms": {
+        "p50": 2.89,
+        "p95": 4.06,
+        "p99": 5.22
+      },
+      "failures": 0
+    }
+  ]
+}

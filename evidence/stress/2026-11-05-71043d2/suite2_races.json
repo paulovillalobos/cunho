@@ -1,0 +1,92 @@
+{
+  "suite": "suite2_races",
+  "passed": 12,
+  "failed": 0,
+  "total": 12,
+  "ok": true,
+  "duration_s": 6.7,
+  "meta": {
+    "n": 20
+  },
+  "checks": [
+    {
+      "check": "same pre-auth code redeemed Nx -> exactly 1 token",
+      "pass": true,
+      "successes": 1,
+      "n": 20
+    },
+    {
+      "check": "same c_nonce used Nx -> exactly 1 credential",
+      "pass": true,
+      "successes": 1,
+      "n": 20
+    },
+    {
+      "check": "same DPoP proof replayed Nx -> exactly 1 token",
+      "pass": true,
+      "successes": 1,
+      "n": 20
+    },
+    {
+      "check": "one access token reused Nx for same config -> exactly 1 (M-1 cap)",
+      "pass": true,
+      "successes": 1,
+      "n": 20
+    },
+    {
+      "check": "tx_code brute force -> 0 successes",
+      "pass": true,
+      "successes": 0,
+      "n": 20
+    },
+    {
+      "check": "tx_code brute force: at most 5 guesses evaluated under concurrency",
+      "pass": true,
+      "evaluated": 5,
+      "n": 20,
+      "no_5xx": true
+    },
+    {
+      "check": "tx_code lockout holds after brute force (correct code rejected)",
+      "pass": true,
+      "status_after": 400
+    },
+    {
+      "check": "concurrent revocations: no 5xx",
+      "pass": true,
+      "statuses": [
+        200
+      ]
+    },
+    {
+      "check": "concurrent revocations: reported revoked <= issued slots (no inflation)",
+      "pass": true,
+      "issued_slots": 1,
+      "total_reported": 1
+    },
+    {
+      "check": "concurrent offer creation across workers: all 201, no 5xx",
+      "pass": true,
+      "statuses": [
+        201
+      ],
+      "n": 20
+    },
+    {
+      "check": "audit verify under concurrent offers across workers: never a false alarm",
+      "pass": true,
+      "verdicts": {
+        "valid": 20
+      },
+      "offers": 109
+    },
+    {
+      "check": "audit chain verifies after the races",
+      "pass": true,
+      "detail": {
+        "valid": true,
+        "detail": "178 entries verified; 179 anchor lines"
+      }
+    }
+  ]
+}

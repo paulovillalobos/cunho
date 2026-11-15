@@ -1,0 +1,152 @@
+{
+  "suite": "suite4_attack",
+  "passed": 23,
+  "failed": 0,
+  "total": 23,
+  "ok": true,
+  "duration_s": 3.2,
+  "meta": {
+    "floods": {
+      "nonce_issued": 115,
+      "nonce_refused": 3885,
+      "rss_before_mb": 0,
+      "rss_after_mb": 71.1,
+      "rss_delta_mb": 71.1
+    }
+  },
+  "checks": [
+    {
+      "check": "alg confusion [none] rejected, no 5xx",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "check": "alg confusion [HS256+pubkey] rejected, no 5xx",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "check": "alg confusion [ES256-on-P384] rejected, no 5xx",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "check": "duplicated DPoP headers rejected, no 5xx",
+      "pass": true,
+      "status": 400,
+      "err": ""
+    },
+    {
+      "check": "oversized header refused, no 5xx",
+      "pass": true,
+      "status": 400,
+      "err": ""
+    },
+    {
+      "check": "unicode/control chars in fields: no 5xx",
+      "pass": true,
+      "offenders": []
+    },
+    {
+      "check": "non-ASCII admin Authorization header: no 5xx",
+      "pass": true,
+      "status": 401,
+      "err": ""
+    },
+    {
+      "check": "very long URL: no 5xx",
+      "pass": true,
+      "status": 404
+    },
+    {
+      "check": "path traversal on /status and /admin: no 5xx / no disclosure",
+      "pass": true,
+      "offenders": []
+    },
+    {
+      "check": "slowloris: normal client unaffected (<5s, succeeds)",
+      "pass": true,
+      "elapsed_s": 0.02,
+      "detail": "issued"
+    },
+    {
+      "check": "20-long KA chain: rejected, no 5xx, no hang",
+      "pass": true,
+      "status": 400,
+      "elapsed_s": 0.0
+    },
+    {
+      "check": "expired KA cert: rejected (not issued), no 5xx",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "check": "not-yet-valid KA cert: rejected (not issued), no 5xx",
+      "pass": true,
+      "status": 400
+    },
+    {
+      "check": "CA cert used as KA signer: rejected (not issued)",
+      "pass": true,
+      "status": 400,
+      "note": "issued=200 would confirm H-4"
+    },
+    {
+      "check": "JWK with huge coordinates: rejected, no 5xx, no hang",
+      "pass": true,
+      "status": 400,
+      "elapsed_s": 0.0
+    },
+    {
+      "check": "credential request with 10k proofs: rejected, no 5xx, no hang",
+      "pass": true,
+      "status": 400,
+      "elapsed_s": 0.0
+    },
+    {
+      "check": "admin token comparison shows no timing signal",
+      "pass": true,
+      "median_allwrong_ms": 0.298,
+      "median_prefix_ms": 0.298,
+      "rel_diff": 0.002
+    },
+    {
+      "check": "flood /nonce: no 5xx, 429 once over the limit",
+      "pass": true,
+      "issued": 115,
+      "refused_429": 3885,
+      "n": 4000,
+      "other": []
+    },
+    {
+      "check": "flood /nonce: 429 answers carry Retry-After",
+      "pass": true
+    },
+    {
+      "check": "flood /token: no 5xx, 429 once over the limit",
+      "pass": true,
+      "refused_429": 76,
+      "n": 170,
+      "other": [
+        400,
+        429
+      ]
+    },
+    {
+      "check": "flood failed admin logins: no 5xx, 429 once over the limit",
+      "pass": true,
+      "refused_429": 170,
+      "n": 170
+    },
+    {
+      "check": "operator still served while its address is over the anonymous limit",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "check": "flood: RSS growth bounded (<150 MB for the burst)",
+      "pass": true,
+      "rss_delta_mb": 71.1
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "ana": {
+    "name": "Ana Maria Silva",
+    "pid": {
+      "family_name": "Silva",
+      "given_name": "Ana Maria",
+      "birthdate": "1994-03-12",
+      "place_of_birth": {
+        "locality": "Porto",
+        "country": "PT"
+      },
+      "nationalities": [
+        "PT"
+      ],
+      "issuing_country": "PT"
+    },
+    "course": {
+      "family_name": "Silva",
+      "given_name": "Ana Maria",
+      "achievement_title": "Introdução à Carteira Europeia de Identidade Digital",
+      "achievement_description": "Quem emite para a Carteira Europeia de Identidade Digital, e como uma carteira prova um atributo.",
+      "learning_outcomes": [
+        "Explicar os papéis do ecossistema da carteira",
+        "Ler uma oferta de credencial"
+      ],
+      "assessment_grade": "Aprovada (92/100)",
+      "language_of_classes": [
+        "pt",
+        "en"
+      ],
+      "expected_study_time": "PT12H",
+      "ects_credits": 1,
+      "level_of_learning_experience": 5,
+      "course_provider": "Academia FOAAP (demonstração)",
+      "course_url": "https://foaap.app/demo/courses/eudi-wallet"
+    }
+  },
+  "joao": {
+    "name": "João Pedro Ferreira",
+    "pid": {
+      "family_name": "Ferreira",
+      "given_name": "João Pedro",
+      "birthdate": "1987-09-30",
+      "place_of_birth": {
+        "locality": "Lisboa",
+        "country": "PT"
+      },
+      "nationalities": [
+        "PT"
+      ],
+      "issuing_country": "PT"
+    },
+    "course": {
+      "family_name": "Ferreira",
+      "given_name": "João Pedro",
+      "achievement_title": "Credenciais digitais para universidades",
+      "achievement_description": "Emitir diplomas e certificados de curso para a Carteira Europeia de Identidade Digital.",
+      "learning_outcomes": [
+        "Desenhar um certificado de curso",
+        "Planear um serviço de emissão"
+      ],
+      "assessment_grade": "Aprovado com distinção",
+      "language_of_classes": [
+        "pt"
+      ],
+      "expected_study_time": "PT20H",
+      "ects_credits": 2,
+      "level_of_learning_experience": 6,
+      "course_provider": "Academia FOAAP (demonstração)",
+      "course_url": "https://foaap.app/demo/courses/digital-credentials"
+    }
+  },
+  "ines": {
+    "name": "Inês Gonçalves Rodrigues",
+    "pid": {
+      "family_name": "Gonçalves Rodrigues",
+      "given_name": "Inês",
+      "birthdate": "1999-06-21",
+      "place_of_birth": {
+        "locality": "Braga",
+        "country": "PT"
+      },
+      "nationalities": [
+        "PT"
+      ],
+      "issuing_country": "PT"
+    },
+    "course": {
+      "family_name": "Gonçalves Rodrigues",
+      "given_name": "Inês",
+      "achievement_title": "Privacidade desde a conceção",
+      "achievement_description": "Minimização de dados e divulgação seletiva em credenciais digitais.",
+      "learning_outcomes": [
+        "Aplicar a minimização de dados",
+        "Explicar a divulgação seletiva"
+      ],
+      "assessment_grade": "Aprovada (85/100)",
+      "language_of_classes": [
+        "pt",
+        "en"
+      ],
+      "expected_study_time": "PT8H",
+      "ects_credits": 1,
+      "level_of_learning_experience": 6,
+      "course_provider": "Academia FOAAP (demonstração)",
+      "course_url": "https://foaap.app/demo/courses/privacy-by-design"
+    }
+  }
+}

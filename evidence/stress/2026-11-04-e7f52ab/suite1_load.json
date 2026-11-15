@@ -1,0 +1,252 @@
+{
+  "suite": "suite1_load",
+  "passed": 10,
+  "failed": 0,
+  "total": 10,
+  "ok": true,
+  "duration_s": 5.7,
+  "meta": {
+    "1w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 20,
+          "succeeded": 20,
+          "error_rate": 0.0,
+          "throughput_rps": 290.25,
+          "elapsed_s": 0.07,
+          "latency_ms": {
+            "p50": 42.75,
+            "p95": 47.07,
+            "p99": 47.38
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 100,
+          "succeeded": 100,
+          "error_rate": 0.0,
+          "throughput_rps": 466.46,
+          "elapsed_s": 0.21,
+          "latency_ms": {
+            "p50": 85.4,
+            "p95": 138.87,
+            "p99": 141.54
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 100,
+          "flows": 200,
+          "succeeded": 200,
+          "error_rate": 0.0,
+          "throughput_rps": 466.25,
+          "elapsed_s": 0.43,
+          "latency_ms": {
+            "p50": 168.26,
+            "p95": 234.92,
+            "p99": 240.85
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 200,
+          "flows": 400,
+          "succeeded": 400,
+          "error_rate": 0.0,
+          "throughput_rps": 471.91,
+          "elapsed_s": 0.85,
+          "latency_ms": {
+            "p50": 327.67,
+            "p95": 412.48,
+            "p99": 420.63
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 143.2,
+      "rss_samples": [
+        [
+          0.5,
+          104.0
+        ],
+        [
+          1.0,
+          141.28125
+        ],
+        [
+          1.5,
+          143.1875
+        ]
+      ]
+    },
+    "4w": {
+      "levels": [
+        {
+          "concurrency": 10,
+          "flows": 20,
+          "succeeded": 20,
+          "error_rate": 0.0,
+          "throughput_rps": 109.07,
+          "elapsed_s": 0.18,
+          "latency_ms": {
+            "p50": 128.1,
+            "p95": 146.48,
+            "p99": 148.6
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 50,
+          "flows": 100,
+          "succeeded": 100,
+          "error_rate": 0.0,
+          "throughput_rps": 239.54,
+          "elapsed_s": 0.42,
+          "latency_ms": {
+            "p50": 157.99,
+            "p95": 254.39,
+            "p99": 259.64
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 100,
+          "flows": 200,
+          "succeeded": 200,
+          "error_rate": 0.0,
+          "throughput_rps": 266.47,
+          "elapsed_s": 0.75,
+          "latency_ms": {
+            "p50": 295.22,
+            "p95": 451.35,
+            "p99": 464.02
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        },
+        {
+          "concurrency": 200,
+          "flows": 400,
+          "succeeded": 400,
+          "error_rate": 0.0,
+          "throughput_rps": 256.41,
+          "elapsed_s": 1.56,
+          "latency_ms": {
+            "p50": 560.22,
+            "p95": 922.72,
+            "p99": 980.57
+          },
+          "server_5xx_or_exc": 0,
+          "first_error": null
+        }
+      ],
+      "rss_peak_mb": 389.3,
+      "rss_samples": [
+        [
+          0.5,
+          329.984375
+        ],
+        [
+          1.0,
+          350.71875
+        ],
+        [
+          1.5,
+          386.25
+        ],
+        [
+          2.0,
+          388.59375
+        ],
+        [
+          2.5,
+          389.3125
+        ]
+      ]
+    }
+  },
+  "checks": [
+    {
+      "check": "1w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 290.25,
+      "p95_ms": 47.07,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 466.46,
+      "p95_ms": 138.87,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=100: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 466.25,
+      "p95_ms": 234.92,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w c=200: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 471.91,
+      "p95_ms": 412.48,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "1w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 143.2
+    },
+    {
+      "check": "4w c=10: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 109.07,
+      "p95_ms": 146.48,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=50: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 239.54,
+      "p95_ms": 254.39,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=100: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 266.47,
+      "p95_ms": 451.35,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w c=200: no 5xx & error_rate<=1%",
+      "pass": true,
+      "rps": 256.41,
+      "p95_ms": 922.72,
+      "err_rate": 0.0,
+      "first_error": null
+    },
+    {
+      "check": "4w: RSS peak < 1500 MB",
+      "pass": true,
+      "peak_mb": 389.3
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+out/
+dev/
+tools/oidf/_work/
+tools/oidf/_suite/
+tools/oidf/_venv/

@@ -1,0 +1,27 @@
+cunho
+Copyright 2026 FOAAP, Lda.
+
+This product includes software developed by FOAAP, Lda.
+
+cunho is licensed under the GNU Affero General Public License, version 3 (AGPL-3.0-only;
+see LICENSE). FOAAP, Lda also offers cunho under a commercial licence, for use without the
+obligations of the AGPL. Contact: paulo@foaap.app.
+
+binder/ and research/ quote short excerpts from EU legal acts (EUR-Lex, (c) European
+Union, reuse authorised under Commission Decision 2011/833/EU), from the EUDI Wallet
+Architecture and Reference Framework, technical specifications and rulebooks published
+by the European Commission, from OpenID Foundation specifications, and from IETF RFCs
+and Internet-Drafts. Each excerpt names its source.
+
+src/cunho/metadata_config/ contains credential configuration files copied unchanged
+from the EU Digital Identity Wallet issuer reference implementation,
+Copyright (c) 2023 European Commission, licensed under the Apache License 2.0.
+See src/cunho/metadata_config/NOTICE and the Apache License 2.0 text in
+src/cunho/metadata_config/LICENSE.
+
+src/cunho_demo/static/fonts/ contains the Space Grotesk typeface, Copyright 2020 The Space
+Grotesk Project Authors, licensed under the SIL Open Font License 1.1 (see the OFL.txt
+beside it).
+
+src/cunho_demo/static/arms.svg is the arms from Flag_of_Portugal.svg on Wikimedia Commons
+(public domain), recoloured in black and white.

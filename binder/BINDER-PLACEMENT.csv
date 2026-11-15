@@ -1,0 +1,417 @@
+binder_id,our_rule_id,component,strength,binds,condition,probe_checks
+ARF-ISSU_01a,VCI.PROFILE.OID4VCI_HAIP,issuance,MUST,SOFTWARE,ARF guidance (not law); protocol profile = OID4VCI + HAIP §4/§6 + TS3,M01;M05;M06;M12;M13;M14;T01;C01
+ARF-ISSU_15,VCI.PROFILE.OID4VCI_HAIP,issuance,MUST,SOFTWARE,,C01
+ARF-ISSU_26,VCI.PROFILE.OID4VCI_HAIP,issuance,MUST,SOFTWARE,,C01
+ARF-ISSU_03,VCI.DCAPI.ISSUANCE,oauth,CONDITIONAL-MUST,SOFTWARE,"Only once the DC API is a W3C Recommendation and OpenID4VCI specifies DC API issuance (HLR note: requirement ""implies that the following conditions will be satisfied"")",
+ARF-ISSU_12,VCI.FORMATS.ALL_RULEBOOK,issuance,MUST,SOFTWARE,Formats required by the PID Rulebook or the applicable Attestation Rulebook,M15
+ARF-OIA_03,CRYPTO.ALG_ALLOWLIST_ACM,signer,MUST,SOFTWARE,,M08;M12;T08;S05
+ARF-ProxId_02,MDOC.NO_SERVER_RETRIEVAL,credentials,MUST,SOFTWARE,Prohibition (SHALL NOT); only relevant to ISO/IEC 18013-5 server retrieval,
+ARF-ISSU_18,ISS.IDPROOF.LOA_HIGH,subject,MUST,OPERATOR,"Identity-proofing procedure; LoA High requirements ""determined by the relevant eID scheme"" (HLR note)",
+ARF-ISSU_19a,ISS.WALLET_SOLUTIONS.ACCEPTED,subject,MUST,OPERATOR,Scope = Wallet Solutions recognised under the notified eID scheme (configuration/policy),
+ARF-ISSU_20,ORG.PUBLISH_WALLET_SOLUTIONS,operator,MUST,OPERATOR,"HLR note: ""a policy requirement rather than a technical requirement""",
+ARF-ISSU_27a,ISS.SUBJECT.IDENTITY_VERIFIED,subject,CONDITIONAL-MUST,OPERATOR,Only if the attestation subject is a natural person,
+ARF-ISSU_27b,ISS.SUBJECT.ATTR_SOURCE_BINDING,subject,CONDITIONAL-MUST,OPERATOR,"""If applicable""",
+ARF-ISSU_27c,ISS.SUBJECT.ENTITLEMENT,subject,MUST,SOFTWARE,Authorisation decision in the issuance flow,
+ARF-ISSU_29,ISS.NO_WALLET_DISCRIMINATION,subject,MUST,SOFTWARE,Not for nqEAA (HLR note); exception for SUA attestations where the Wallet cannot process transactional data,
+ARF-SUA_03,ISS.SUA.WALLET_GATE,subject,MUST,SOFTWARE,Only SUA attestations other than the one(s) specified in TS12,
+ARF-ACP_07,ISS.ACP.SUBJECT_MATCH,subject,CONDITIONAL-MUST,SOFTWARE,Only if the AP makes an ACP_05 request (requesting PID/attestation from the Wallet before issuance),
+ARF-EDP_09,META.EDP_BY_VALUE,metadata,CONDITIONAL-MUST,SOFTWARE,"Only if the attestation has an embedded disclosure policy (""(if any)"")",M20
+ARF-PID_01,PID.RULEBOOK.CONFORMANCE,credentials,MUST,SOFTWARE,Umbrella,
+ARF-ISSU_14,PID.RULEBOOK.CONFORMANCE,credentials,MUST,SOFTWARE,,
+ARF-PID_02,VCI.FORMATS.ALL_RULEBOOK,issuance,MUST,SOFTWARE,"ARF only: the 2026 PID Annex says ""clauses 5 ... and 6 ... as applicable"", not ""both""",M15
+ARF-PID_03,PID.PORTRAIT.OPTOUT_EMPTY,credentials,CONDITIONAL-MUST,SOFTWARE,"Only if the PP offers the (optional, MAY) portrait opt-out and the User opts out; portrait mandatory from 2028-08-11",
+ARF-PID_04,PID.MDOC.DOCTYPE_NAMESPACE,credentials,MUST,SOFTWARE,mdoc PIDs,C16
+ARF-PID_05,PID.MDOC.DOCTYPE_NAMESPACE,credentials,MUST,SOFTWARE,mdoc PIDs,C16
+ARF-PID_06,PID.MDOC.DOMESTIC_NAMESPACE,credentials,CONDITIONAL-MUST,SOFTWARE,Only if the PP includes attributes not defined in the PID Rulebook (MAY),
+ARF-PID_07,ORG.PID.PUBLISH_DOMESTIC_TYPES,operator,CONDITIONAL-MUST,OPERATOR,Only a PP that defines a domestic namespace,
+ARF-PID_08,PID.ATTRS.MANDATORY_AND_METADATA,credentials,MUST,SOFTWARE,mdoc PIDs,
+ARF-PID_09,PID.MDOC.ENCODING,credentials,MUST,SOFTWARE,mdoc PIDs,
+ARF-PID_10,PID.MDOC.ENCODING,credentials,MUST,SOFTWARE,mdoc PIDs,C16
+ARF-PID_11,PID.MDOC.NO_DUPLICATE_ELEMENTS,credentials,MUST,SOFTWARE,mdoc PIDs,
+ARF-PID_12,PID.VALUES.VALID_AT_VALIDITY_START,credentials,MUST,SOFTWARE,mdoc PIDs,
+ARF-PID_13,PID.VALIDITY.ADMIN_VS_TECHNICAL_POLICY,credentials,CONDITIONAL-MUST,OPERATOR,Only mdoc PIDs that contain issuance_date or expiry_date; duty is to HAVE A POLICY,
+ARF-PID_14,PID.SDJWT.VCT,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,C02;M15
+ARF-PID_16,ORG.PID.PUBLISH_DOMESTIC_TYPES,operator,CONDITIONAL-MUST,OPERATOR,Only a PP that defines a domestic type,
+ARF-PID_17,PID.ATTRS.MANDATORY_AND_METADATA,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,
+ARF-PID_18,PID.SDJWT.CLAIM_MAPPING,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,
+ARF-PID_19,PID.VALUES.VALID_AT_VALIDITY_START,credentials,CONDITIONAL-MUST,SOFTWARE,"SD-JWT VC PIDs, and only ""if present"" (nbf)",
+ARF-PID_20,PID.VALIDITY.ADMIN_VS_TECHNICAL_POLICY,credentials,CONDITIONAL-MUST,OPERATOR,Only SD-JWT VC PIDs containing date_of_issuance or date_of_expiry; duty is to HAVE A POLICY,
+ARF-PID_21,PID.SDJWT.RECURSIVE_SD,credentials,MUST,SOFTWARE,SD-JWT VC PIDs; claims non-SD per SD-JWT VC excepted,C02
+ARF-ISSU_25,EAA.RULEBOOK.CONFORMANCE,credentials,MUST,SOFTWARE,,
+ARF-ARB_01b,FMT.SDJWT.HAIP_PROFILE,context,MUST,NONE (Scheme Provider),Binds the Scheme Provider of an SD-JWT VC Attestation Rulebook; APs are reached only via ISSU_25,C02;C03
+ARF-ARB_25,EAA.RULEBOOK.LEGAL_CATEGORY,context,MUST,NONE (Attribute Schema Provider),Rulebook content duty,
+ARF-ARB_30,EAA.RULEBOOK.SD_POLICY,context,CONDITIONAL-MUST,NONE (Scheme Provider),Only rulebooks specifying SD-JWT VC attestations,
+ARF-ARB_34,EAA.RULEBOOK.DEVICE_BINDING_DECLARED,context,MUST,NONE (Scheme Provider),Rulebook content duty,
+PIDRB-§3.1.2a,PID.MDOC.TSTR_MAX150,credentials,MUST,SOFTWARE,mdoc PIDs,
+PIDRB-§3.1.2b,PID.MDOC.UTF8,credentials,MUST,SOFTWARE,mdoc PIDs,
+PIDRB-§3.1.2c,PID.MDOC.FULL_DATE_TAG1004,credentials,MUST,SOFTWARE,"mdoc PIDs; sentence is definitional (no keyword) but the same list makes it binding and 2977 Annex 4.1(e) says ""shall be interpreted as #6.1004(tstr)""",
+PIDRB-§3.1.2d,PID.MDOC.TDATE_NO_FRACTION_Z,credentials,MUST,SOFTWARE,"mdoc PIDs; ""unless otherwise indicated""",
+PIDRB-§3.1.2e,PID.MDOC.CANONICAL_CBOR,credentials,MUST,SOFTWARE,mdoc PIDs,
+PIDRB-§3.1.4,PID.MDOC.PLACE_OF_BIRTH_NONEMPTY,credentials,MUST,SOFTWARE,mdoc PIDs,
+PIDRB-§2.2,PID.VALUES.NATIONALITY_QU_QS,credentials,MUST,SOFTWARE,"Rulebook table has no keyword; binding text is 2977 Annex §1 (""Member States shall use the value 'QU'"") via 2977 Art. 3(3)",
+PIDRB-§2.5,PID.VALUES.ISSUING_JURISDICTION_PREFIX,credentials,CONDITIONAL-MUST,SOFTWARE,"Only if the optional issuing_jurisdiction is included; lower-case ""shall"" copied from 2977 Table 5",
+PIDRB-§4.1.1a,PID.SDJWT.UTF8,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,
+PIDRB-§4.1.1b,PID.SDJWT.PLACE_OF_BIRTH_NONEMPTY,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,
+PIDRB-§4.1.1c,PID.SDJWT.PICTURE_DATA_URL_JPEG,credentials,CONDITIONAL-MUST,SOFTWARE,"Only when picture is present (portrait mandatory only from 2028-08-11); table bound by ARF PID_18 ""SHALL encode""",
+PIDRB-§4.1.1d,PID.SDJWT.NBF_EXP,credentials,MUST,SOFTWARE,SD-JWT VC PIDs; binding text is 2977 Annex §4.2,C02
+ARF-ISSU_17,BIND.DEVICE_BOUND,proofs,MUST,SOFTWARE,,C02;C04;I03
+ARF-ISSU_27,BIND.DEVICE_BOUND,proofs,CONDITIONAL-MUST,SOFTWARE,Device binding itself is only SHOULD; the SHALL applies to attestations that are device-bound,C02;C04;I03
+ARF-WUA_09a,KA.BIND_TO_ATTESTED_KEY,proofs,MUST,SOFTWARE,APs: only device-bound attestations,
+ARF-WUA_11a,KA.VERIFY,proofs,MUST,SOFTWARE,APs: only device-bound attestations,S14;W10
+ARF-WUA_12,KA.POP_ALL_KEYS,proofs,MUST,SOFTWARE,APs: only device-bound attestations,S01
+ARF-WUA_25,WIA.VERIFY,trust,MUST,SOFTWARE,Device-bound and non-device-bound (HLR note),W01;W09;W02
+ARF-WUA_34,KA.PID_KEY_IN_WSCD,proofs,MUST,SOFTWARE,,
+ARF-WUA_10a,META.NO_KA_FOR_UNBOUND,metadata,CONDITIONAL-MUST,SOFTWARE,Only APs issuing non-device-bound attestations,M07
+ARF-WUA_04,CRYPTO.ALG_ALLOWLIST_ACM,signer,MUST,SOFTWARE,,M08;S05
+ARF-WUA_32,META.PREFERRED_STATUS_PERIODS,metadata,CONDITIONAL-MUST,SOFTWARE,Only a provider that HAS minimum requirements on the remaining revocation-maintenance period,
+ARF-WUA_36,TS3.CONFORMANCE,trust,MUST,SOFTWARE,Umbrella,
+ARF-WUA_29,REVOC.CHAIN_WIA_KA,status,MUST,SOFTWARE,Throughout PID validity,
+ARF-WUA_30,VALIDITY.PID_LE_STATUS_EXP,credentials,MUST,SOFTWARE,,
+ARF-ISSU_12c,VALIDITY.PID_LE_STATUS_EXP,credentials,MUST,SOFTWARE,,
+ARF-ISSU_12d,VALIDITY.EAA_LE_STATUS_EXP,credentials,CONDITIONAL-MUST,SOFTWARE,Only if the AP supports revocation chaining (WURevocation_19),
+ARF-ISSU_19,TRUST.WP_ANCHORS_FROM_LIST,trust,MUST,SOFTWARE,"Only the anchors ""it needs"" (HLR note: not all Wallet Providers)",W02
+ARF-ISSU_19b,TRUST.LOTE_PARSER_119602,trust,MUST,SOFTWARE,,
+ARF-ISSU_21,WIA.CHAIN_TO_WP_LIST;KA.CHAIN_TO_WP_LIST,trust,MUST,SOFTWARE,,W02;W10
+ARF-ISSU_27d,META.KEY_STORAGE_LEVELS,metadata,CONDITIONAL-MUST,SOFTWARE,Only APs issuing device-bound attestations,M10
+ARF-ISSU_28,TRUST.WP_ANCHORS_FROM_LIST,trust,MUST,SOFTWARE,,W02
+ARF-ISSU_28a,TRUST.LOTE_PARSER_119602,trust,MUST,SOFTWARE,,
+ARF-ISSU_30,KA.CHAIN_TO_WP_LIST,proofs,CONDITIONAL-MUST,SOFTWARE,Only device-bound attestations,W10
+ARF-ISSU_30a,WIA.CHAIN_TO_WP_LIST,trust,MUST,SOFTWARE,Device-bound and non-device-bound,W02
+ARF-VCR_12a,STATUS.CLIENT_TSL,status,MUST,SOFTWARE,,
+ARF-WPNot_04,TRUST.WP_ANCHORS_FROM_LIST,trust,MUST,SOFTWARE,,
+ARF-WURevocation_18,REVOC.CHAIN_WIA_KA,status,CONDITIONAL-MUST,SOFTWARE,Only PPs issuing revocable PIDs,
+ARF-WURevocation_11,REVOC.STORE_WIA_CLIENT_STATUS,status,CONDITIONAL-MUST,SOFTWARE,Only when the PP asks a Wallet Provider to revoke a Wallet Unit because the user died,
+ARF-WURevocation_13,ORG.REVOCATION_STAKEHOLDERS,operator,CONDITIONAL-MUST,OPERATOR,Only before a WURevocation_11 request,
+ARF-WURevocation_19,ORG.EAA_CHAIN_REVOCATION_POLICY,operator,CONDITIONAL-MUST,OPERATOR,Only APs issuing revocable attestations; revoking on Wallet Unit revocation is itself MAY,
+TS3-§2.2.1.2a,WIA.SIGNATURE_X5C,trust,MUST,SOFTWARE,When a WIA is received,W03
+TS3-§2.2.1.2b,WIA.NOT_EXPIRED,trust,MUST,SOFTWARE,When a WIA is received,W05
+TS3-§2.2.1.2c,WIA.POP_CNF,trust,MUST,SOFTWARE,When a WIA is received,W04
+TS3-§2.2.2.2a,META.PROOF_TYPES_JWT_AND_ATTESTATION,metadata,CONDITIONAL-MUST,SOFTWARE,Only issuers of device-bound credentials (always for PIDs),M07
+TS3-§2.2.2.2b,META.NO_KA_FOR_UNBOUND,metadata,CONDITIONAL-MUST,SOFTWARE,Only APs issuing non-device-bound attestations,M07
+TS3-§2.2.2.2c,KA.JWT_PROOF_ATTESTED_KEY0,proofs,CONDITIONAL-MUST,SOFTWARE,Only when a KA arrives in a jwt proof,
+TS3-§2.2.2.2d,VCI.NONCE.C_NONCE_VALID,oauth,CONDITIONAL-MUST,SOFTWARE,Only when a KA arrives in a jwt (or attestation) proof,S03;S04;S15;N01
+TS3-§2.3.1,REVOC.CHAIN_WIA_KA,status,MUST,SOFTWARE,"PIDs valid > 24 h (shorter PIDs: check only at issuance, §2.4.3); APs MAY",
+TS3-§2.3.2a,KA.PID_KEY_IN_WSCD,proofs,MUST,SOFTWARE,,
+TS3-§2.3.2b,PRIV.NO_KA_IDX_AS_WALLET_ID,privacy,MUST,SOFTWARE,Keyword appears inside a non-normative Note block,
+TS3-§2.4.3a,VALIDITY.PID_LE_STATUS_EXP,credentials,MUST,SOFTWARE,,
+TS3-§2.4.3b,KA.STATUS_AT_ISSUANCE,proofs,CONDITIONAL-MUST,SOFTWARE,Only device-bound attestations,
+TS3-§2.6,CRYPTO.ES256_384_512,signer,MUST,SOFTWARE,"For WIAs, KAs, PoPs and Token Status Lists",M07
+ARF-VCR_01,STATUS.SHORTLIVED_OR_LIST,status,MUST,SOFTWARE,mdoc only; short-lived (<=24 h) credentials are one permitted method,I06
+ARF-VCR_01b,STATUS.SHORTLIVED_OR_LIST,status,MUST,SOFTWARE,SD-JWT VC only; short-lived (<=24 h) credentials are a permitted alternative,C03
+ARF-VCR_11,STATUS.MDOC_MECHANISM,status,MUST,SOFTWARE,mdoc; read with VCR_01 (<=24 h validity exempts PP/QEAA/PuB-EAA) and VCR_02 (nqEAA revocability set by rulebook),I06
+ARF-VCR_11a,STATUS.SDJWT_TSL,status,MUST,SOFTWARE,SD-JWT VC; read with VCR_01b and VCR_02,C03
+ARF-VCR_02,EAA.RULEBOOK.REVOCABILITY,context,MUST,NONE (Rulebook),Binds the relevant Rulebook; nqEAA issuer duty only via its rulebook,
+ARF-VCR_03,STATUS.WRITE_AUTHZ,status,CONDITIONAL-MUST,OPERATOR,Only revocable credentials; operation may be outsourced (HLR note),
+ARF-VCR_04,STATUS.MONOTONIC,status,MUST,SOFTWARE,Prohibition (SHALL NOT); also binds Wallet Providers,
+ARF-VCR_05,ORG.REVOCATION_POLICY,operator,CONDITIONAL-MUST,OPERATOR,Only revocable credentials,
+ARF-VCR_06,REVOC.ON_COMPROMISE,status,CONDITIONAL-MUST,OPERATOR,Only revocable credentials; trigger is a security compromise (incident decision),
+ARF-VCR_07a,REVOC.ON_USER_REQUEST,status,CONDITIONAL-MUST,OPERATOR,Only revocable PIDs; trigger is a User request,
+ARF-VCR_07b,REVOC.ON_USER_REQUEST,status,SHOULD,OPERATOR,Only revocable attestations (SHALL for QEAA/PuB-EAA under 1569 Art. 4(3)(a) when validity > 24 h),
+ARF-VCR_07c,REVOC.CHAIN_WIA_KA,status,CONDITIONAL-MUST,SOFTWARE,Only revocable PIDs,
+ARF-VCR_07d,REVOC.CHAIN_WIA_KA,status,MAY,SOFTWARE,Only revocable attestations,
+ARF-VCR_08,REVOC.ON_DEATH,status,CONDITIONAL-MUST,OPERATOR,Only revocable PIDs; trigger is the death of the subject,
+ARF-VCR_09,REVOC.ON_ATTR_CHANGE_GE24H,status,CONDITIONAL-MUST,OPERATOR,Only revocable credentials with >= 24 h validity left; user notification only SHOULD,
+ARF-EDP_11,REVOC.ON_EDP_CHANGE,status,CONDITIONAL-MUST,OPERATOR,Only attestations with an embedded disclosure policy that is added/changed/deleted,
+ARF-PPNot_03a,STATUS.LIST_SIGNER_AUTHENTICATED,status,MUST,SOFTWARE,Applies to status/revocation lists used for PIDs,C03
+ARF-PuBPNot_05,STATUS.LIST_SIGNER_AUTHENTICATED,status,MUST,SOFTWARE,,C03
+ARF-RP_02,REVOC.REPRESENTATION,status,CONDITIONAL-MUST,OPERATOR,Only APs issuing representation attestations (natural person for natural person),
+ARF-ARB_24a,STATUS.URI_PER_RULEBOOK,context,CONDITIONAL-MUST,NONE (Rulebook),Only revocable attestations; binds the Attestation Rulebook,C03
+ARF-ISSU_22,META.SIGNED_X5C_ACCESS_CERT,metadata,MUST,SOFTWARE,,M17
+ARF-ISSU_32,META.SIGNED_X5C_ACCESS_CERT,metadata,MUST,SOFTWARE,,M17
+ARF-ISSU_68,TRUST.SIGNER_CERT_PROFILE_119412_6,trust,MUST,OPERATOR,Property of the signing certificate obtained by the operator,C02;C16
+ARF-ISSU_70,TRUST.SIGNER_CERT_PROFILE_119412_6,trust,MUST,OPERATOR,Certificate profile,C02;C16
+ARF-ISSU_71,TRUST.SIGNER_CERT_PROFILE_119412_6,trust,MUST,OPERATOR,Certificate profile,C02;C16
+ARF-ISSU_73,TRUST.SIGNER_CERT_PROFILE_119412_6,trust,MUST,OPERATOR,Certificate profile,C02;C16
+ARF-ISSU_67,ORG.ISSUANCE_POLICY_119471,operator,MUST,OPERATOR,,
+ARF-ISSU_69,ORG.ISSUANCE_POLICY_119471,operator,MUST,OPERATOR,,
+ARF-ISSU_72,ORG.ISSUANCE_POLICY_119471,operator,MUST,OPERATOR,,
+ARF-PPNot_03,TRUST.SIGNER_CHAIN_TO_NOTIFIED_ANCHOR,trust,MUST,OPERATOR,Depends on Member State notification of the PP trust anchors,C02
+ARF-PPNot_04,TRUST.ACCESS_CERT_CHAIN_TO_ACCESS_CA,trust,MUST,OPERATOR,Access certificate obtained from an Access CA,
+ARF-PuBPNot_04,TRUST.SIGNER_CHAIN_TO_NOTIFIED_ANCHOR,trust,MUST,OPERATOR,Depends on notification of PuB-EAA trust anchors,C02
+ARF-Reg_10a,REG.ACCESS_CERT_PER_SERVICE,operator,MUST,OPERATOR,Registration (CIR 2025/848 applies from 2026-12-24),
+ARF-Reg_10e,ORG.REG.TYPES_PER_SERVICE,operator,MUST,OPERATOR,Registration (from 2026-12-24),
+ARF-Reg_08,ORG.REG.KEEP_UPDATED,operator,MUST,OPERATOR,Registration (from 2026-12-24),
+ARF-Reg_31,META.ACCESS_CERT_PROFILE,context,MUST,NONE (Access CA / certificate content),Content of the access certificate issued by the Access CA,
+ARF-Reg_32,META.ACCESS_CERT_PROFILE,context,MUST,NONE (Access CA / certificate content),Content of the access certificate,
+ARF-RPRC_22,META.REGCERT_BY_VALUE,metadata,MUST,SOFTWARE,Registration certificates exist only after registration (848 applies 2026-12-24); Wallet validation only from 2028-08-11,M18
+ARF-RPRC_14,META.REGCERT_DISTRIBUTED_PER_SERVICE,metadata,MUST,OPERATOR,Deployment duty across service supply points,
+ARF-RPRC_15,META.REGCERT_LISTS_TYPES,context,MUST,NONE (registration-certificate content),Content of the registration certificate issued by the provider of registration certificates,
+ARF-RPRC_05,META.REGCERT_NO_INTENDED_USE,context,CONDITIONAL-MUST,NONE (registration-certificate content),Only if the subject is not a Relying Party,
+ARF-RPRC_06,META.REGCERT_MATCHES_ACCESS_CERT,context,MUST,NONE (registration-certificate content),,
+ARF-RPRC_07,META.REGCERT_MATCHES_ACCESS_CERT,context,MUST,NONE (registration-certificate content),,
+ARF-RPRC_07a,META.REGCERT_MATCHES_ACCESS_CERT,context,MUST,NONE (registration-certificate content),,
+ARF-RPRC_02,META.REGCERT_X5C_CHAIN,context,MUST,NONE (provider of registration certificates),,
+ARF-ISSU_64,BATCH.SUPPORT,issuance,MUST,SOFTWARE,ARF guidance (not law); OID4VCI and HAIP leave batch support optional,M09;C04;C05
+ARF-ISSU_63,BATCH.REISSUANCE,issuance,MUST,SOFTWARE,ARF guidance; refresh tokens only RECOMMENDED in HAIP §4.4,A16
+ARF-ISSU_65,BATCH.REISSUE_SAME_WALLET_UNIT,issuance,MUST,SOFTWARE,APs: only device-bound attestations,A17;A21
+ARF-ISSU_43,BATCH.UNIFORM,issuance,CONDITIONAL-MUST,SOFTWARE,Only if Method A is used,C04
+ARF-ISSU_51,BATCH.UNIFORM,issuance,CONDITIONAL-MUST,SOFTWARE,Only if Method C is used,C04
+ARF-ISSU_38,ORG.REUSE_METHOD_POLICY,operator,MUST,OPERATOR,Policy + linkability risk analysis,
+ARF-ISSU_39,META.REUSE_POLICY.PRESENT_ORDERED,metadata,MUST,SOFTWARE,,M19
+ARF-ISSU_40,META.REUSE_POLICY.A_OR_B,metadata,MUST,SOFTWARE,Indicating C/D preference is MAY,M19
+ARF-ISSU_40a,META.REUSE_POLICY.CONFORMANCE_472_3,metadata,CONDITIONAL-MUST,SOFTWARE,"When implementing any ISSU_37 method (in practice always, given ISSU_40)",M19
+ARF-ISSU_45,META.REUSE_POLICY.METHOD_A_PARAMS,metadata,CONDITIONAL-MUST,SOFTWARE,Only if Method A is used,M19
+ARF-ISSU_50,META.REUSE_POLICY.METHOD_B_TRIGGER,metadata,CONDITIONAL-MUST,SOFTWARE,Only if Method B is used,M19
+ARF-ISSU_54,META.REUSE_POLICY.METHOD_C_PARAMS,metadata,CONDITIONAL-MUST,SOFTWARE,Only if Method C is used,M19
+ARF-ISSU_41,BATCH.METHOD_INVISIBLE,issuance,MUST,SOFTWARE,"Qualified: ""To the maximum extent possible""",
+ARF-ISSU_42,BATCH.SILENT_REISSUANCE,issuance,MUST,SOFTWARE,"Qualified: ""To the maximum extent possible""",A16
+ARF-ISSU_35b,LOG.DISCARD_UNIQUE_VALUES,audit,MUST,SOFTWARE,"Data minimisation in the issuer system; values may be kept while ""needed"" (e.g. revocation)",
+ARF-ISSU_35,PRIV.UNIQUE_ELEMENTS_CSPRNG,privacy,MUST,SOFTWARE,,C04
+ARF-ISSU_36,PRIV.TIMESTAMP_COARSENING,privacy,MUST,SOFTWARE,Batch issuance only; SD timestamps excepted (ISSU_36a),
+ARF-VCR_17,PRIV.STATUS_IDX_RANDOM,privacy,CONDITIONAL-MUST,SOFTWARE,Only when an Attestation Status List is used,C04
+ARF-VCR_18,PRIV.STATUS_LIST_HERD_SIZE,privacy,CONDITIONAL-MUST,SOFTWARE,Only when an Attestation Status List is used; no numeric threshold,C03
+ARF-VCR_16,PRIV.STATUS_LIST_UNAUTHENTICATED,privacy,MUST,SOFTWARE,Prohibition (SHALL NOT),C03
+ARF-ISSU_06+ISSU_11a,BATCH.UNIFORM,context,MUST,NONE (Wallet),Wallet-side checks,C01;C04
+ARF-ISSU_07+ISSU_09+ISSU_08,TRUST.SIGNER_CHAIN_TO_NOTIFIED_ANCHOR,context,MUST,NONE (Wallet),Wallet-side checks,C02
+ARF-ISSU_11,META.ACCESS_CERT_PROFILE,context,MUST,NONE (Wallet),Wallet-side,
+ARF-ISSU_24+ISSU_34+CT_05,TRUST.ACCESS_CERT_CHAIN_TO_ACCESS_CA,context,MUST,NONE (Wallet),Wallet-side,
+ARF-ISSU_24a+ISSU_24b+ISSU_34a+ISSU_34b+RPRC_22a+RPRC_22b+RPRC_23,META.REGCERT_MATCHES_ACCESS_CERT,context,CONDITIONAL-MUST,NONE (Wallet),Wallet validation of registration certificates applies only from 24 months after the 2982 amendment (2028-08-11),
+ARF-WUA_05a,META.KEY_STORAGE_LEVELS,context,MUST,NONE (Wallet),Wallet-side,M10
+TS3-§2.2.2.1+§2.4.2,KA.REPLAY_DETECTION,context,MUST,NONE (Wallet / Wallet Provider),Wallet-side; issuer replay detection of KAs is optional hardening,
+ARF-Mig_07+Mig_11,ISS.FRESH_ISSUANCE_AFTER_MIGRATION,context,MUST,NONE (Wallet),Migration flow; issuer only processes a normal issuance,
+ARF-DASH_05,LOG.SPECIFIC_ERROR_CODES,context,MUST,NONE (Wallet),"Wallet transaction log content (cf. CIR 2024/2979 Art. 9, addressed to wallet instances)",R01;R06;C09;C10
+EIDAS-910-Art5a(16)(a),PRIV.NO_PHONE_HOME,context,MUST,NONE (Wallet technical framework),Constrains the Wallet framework; issuer design affected only indirectly,
+EIDAS-910-Art5a(16)(b),PRIV.UNLINKABILITY_BATCH,context,MUST,NONE (Wallet technical framework),PP mirror is 2977 Art. 5(8),
+EIDAS-910-Art5a(5)(b),PRIV.NO_PHONE_HOME,context,MUST,NONE (Wallet),,
+EIDAS-910-Art5a(5)(a)(i),VCI.PROFILE.OID4VCI_HAIP,context,MUST,NONE (Wallet),Wallets must support common issuance protocols; no article obliges a PP to implement OID4VCI,M01;T01;C01
+EIDAS-910-Art5a(5)(f),ISS.SUBJECT_UNIQUENESS,context,MUST,NONE (Wallet; MS notify responsible bodies),,
+EIDAS-910-Art5a(11),ISS.IDPROOF.LOA_HIGH,context,MUST,NONE (Wallet / Member State),,
+EIDAS-910-Art5a(18)(c)-(d),ORG.MS_NOTIFICATION_DATA,context,MUST,NONE (Member States),,
+EIDAS-910-Art5b(1),ORG.REG.REGISTER_AS_WRP,operator,CONDITIONAL-MUST,OPERATOR,Where the party intends to rely on Wallets; registration rules (848) apply from 2026-12-24,
+EIDAS-910-Art19a(1)(a),ORG.RISK_MANAGEMENT,operator,MUST,OPERATOR,Non-qualified trust service providers only,
+EIDAS-910-Art19a(1)(b),ORG.BREACH_NOTIFY_24H,operator,MUST,OPERATOR,Non-qualified TSPs; breaches with significant impact; within 24 h,
+EIDAS-910-Art24(1),ISS.SUBJECT.IDENTITY_VERIFIED,subject,MUST,OPERATOR,QTSPs only; reference standard 2025/1566 applies from 2027-08-19,
+EIDAS-910-Art24(1a)(a),ISS.PID_PRESENTATION_FOR_ISSUANCE,subject,MAY,OPERATOR,Point (a) (Wallet / LoA-high eID) is one of four permitted methods; the duty is to use at least one,
+EIDAS-910-Art24(2)(fb),ORG.BREACH_NOTIFY_24H,operator,MUST,OPERATOR,QTSPs only; within 24 h of the incident,
+EIDAS-910-Art24(2)(g),KEY.PROTECTION_HSM,signer,MUST,OPERATOR,QTSPs only,
+EIDAS-910-Art24(2)(h),LOG.ISSUANCE_AUDIT,audit,MUST,OPERATOR,"QTSPs only (QEAA providers); not PP, not nqEAA; PuB-EAA only indirectly via Art. 45f(2) ""equivalent"" reliability",
+EIDAS-910-Art24(2)(i),ORG.TERMINATION_PLAN,operator,MUST,OPERATOR,QTSPs only,
+EIDAS-910-Art24(3)-publish24h,STATUS.PUBLISH_24H,status,MUST,OPERATOR,QEAA via Art. 24(4a); 24 h from receipt of the revocation request,
+EIDAS-910-Art24(3)-effective,STATUS.ATOMIC_PUBLISH,context,MUST,NONE (legal effect),States the legal effect of publication,
+EIDAS-910-Art24(4),STATUS.RETAINED_BEYOND_VALIDITY,status,MUST,SOFTWARE,QEAA via Art. 24(4a),C03
+EIDAS-910-Art45d(1),QEAA.ANNEX_V,credentials,MUST,SOFTWARE,,
+EIDAS-910-Art45d(3),QEAA.NO_EXTRA_MANDATORY,context,MUST,NONE (legislators / relying parties),Prohibits extra mandatory requirements on QEAAs,
+EIDAS-910-Art45d(4),STATUS.MONOTONIC,status,MUST,SOFTWARE,,
+EIDAS-910-Art45f(1)(b),TRUST.SIGNER_CERT_PROFILE_119412_6,trust,MUST,OPERATOR,Content of the PuB-EAA body's qualified certificate,
+EIDAS-910-Art45f(4),STATUS.MONOTONIC,status,MUST,SOFTWARE,,
+EIDAS-910-Art45f(8),VCI.PROFILE.OID4VCI_HAIP,issuance,MUST,SOFTWARE,No protocol named in the article,M01;C01
+EIDAS-910-Art45g(1),ISS.NO_WALLET_DISCRIMINATION,subject,MUST,SOFTWARE,All EAA providers,
+EIDAS-910-Art45g(2),VCI.PROFILE.OID4VCI_HAIP,issuance,MUST,SOFTWARE,No protocol named in the article,M01;C01
+EIDAS-910-Art45h(1),PRIV.DATA_SEPARATION,privacy,MUST,OPERATOR,"""qualified and non-qualified"" EAA service providers",
+EIDAS-910-Art45h(2),PRIV.DATA_SEPARATION,privacy,MUST,OPERATOR,"""provider of electronic attestation of attributes"" (any)",
+EIDAS-910-Art45h(3),ORG.FUNCTIONAL_SEPARATION,operator,MUST,OPERATOR,,
+EIDAS-910-AnnexV-VII(a),QEAA.QUALIFIED_INDICATOR,credentials,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,
+EIDAS-910-AnnexV-VII(b),QEAA.ISSUER_IDENTITY,credentials,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,
+EIDAS-910-AnnexV-VII(c),QEAA.SUBJECT_OR_PSEUDONYM,credentials,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,
+EIDAS-910-AnnexV-VII(d),QEAA.ATTRIBUTES_SCOPE,credentials,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,
+EIDAS-910-AnnexV-VII(e),FMT.VALIDITY_PERIOD,credentials,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,C02
+EIDAS-910-AnnexV-VII(f),QEAA.ATTESTATION_ID_UNIQUE,credentials,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,
+EIDAS-910-AnnexV-VII(g),QEAA.QUALIFIED_SEAL,credentials,MUST,OPERATOR,Annex V (QEAA) and Annex VII (PuB-EAA) contents,C02;C16
+EIDAS-910-AnnexV-VII(h),QEAA.CERT_LOCATION,credentials,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,
+EIDAS-910-AnnexV-VII(i),STATUS.REFERENCE_PUBLIC,status,MUST,SOFTWARE,Annex V (QEAA) and Annex VII (PuB-EAA) contents,C03
+EIDAS-2977-Art3(1),ISS.SCHEME.ISSUE_PER_EID_SCHEME,subject,MUST,OPERATOR,,
+EIDAS-2977-Art3(2),FMT.VALIDATION_INFO_EMBEDDED,credentials,MUST,SOFTWARE,,C02;C16
+EIDAS-2977-Art3(3),PID.RULEBOOK.CONFORMANCE,credentials,MUST,SOFTWARE,,
+EIDAS-2977-Art3(4),ISS.SUBJECT_UNIQUENESS,context,MUST,NONE (Member States),,
+EIDAS-2977-Art3(5),BIND.DEVICE_BOUND,proofs,MUST,SOFTWARE,,C02;C04;I03
+EIDAS-2977-Art3(7),ISS.IDPROOF.LOA_HIGH,subject,MUST,OPERATOR,Enrolment at LoA high (CIR 2015/1502),
+EIDAS-2977-Art3(8),META.SIGNED_X5C_ACCESS_CERT,metadata,MUST,SOFTWARE,Access certificate OR another authentication mechanism under an eID scheme notified at LoA high,M17
+EIDAS-2977-Art3(9),WIA.VERIFY,trust,MUST,SOFTWARE,WUA validation OR another authentication mechanism under an eID scheme notified at LoA high,W01;W09;W02
+EIDAS-2977-Art4(1),EAA.RULEBOOK.CONFORMANCE,credentials,MUST,SOFTWARE,All EAA issued to wallet units,C02;C16
+EIDAS-2977-Art4(2),META.SIGNED_X5C_ACCESS_CERT,metadata,MUST,SOFTWARE,,M17
+EIDAS-2977-Art4(3),FMT.VALIDATION_INFO_EMBEDDED,credentials,MUST,SOFTWARE,,C02;C16
+EIDAS-2977-Art5(1),ORG.REVOCATION_POLICY,operator,MUST,OPERATOR,,
+EIDAS-2977-Art5(2),STATUS.WRITE_AUTHZ,status,MUST,OPERATOR,Allocation of revocation authority (software access control implements it),
+EIDAS-2977-Art5(3),REVOC.USER_NOTICE_24H,status,CONDITIONAL-MUST,OPERATOR,Only after the PP has revoked a PID; within 24 h,
+EIDAS-2977-Art5(4)(a),REVOC.ON_USER_REQUEST,status,CONDITIONAL-MUST,OPERATOR,"""Where providers ... revoke"" PIDs, i.e. for revocable PIDs; trigger is a user request",
+EIDAS-2977-Art5(4)(b),REVOC.CHAIN_WIA_KA,status,CONDITIONAL-MUST,SOFTWARE,"""Where providers ... revoke"" PIDs; trigger is WUA revocation (needs WIA/KA status monitoring)",
+EIDAS-2977-Art5(5),STATUS.MONOTONIC,status,MUST,SOFTWARE,,
+EIDAS-2977-Art5(6),ORG.RETENTION_REVOKED_PID,operator,MUST,OPERATOR,Retention period set by Union/national law,
+EIDAS-2977-Art5(7),STATUS.REFERENCE_PUBLIC,status,CONDITIONAL-MUST,SOFTWARE,"PID providers only, and only ""where"" they revoke PIDs (non-revocable/short-lived PIDs are outside it)",C03;I06
+EIDAS-2977-Art5(8),PRIV.UNLINKABILITY_BATCH,privacy,MUST,SOFTWARE,Wording refers to EAAs not requiring identification,C04
+EIDAS-2977-Annex§1-T1,PID.ATTRS.MANDATORY_AND_METADATA,credentials,MUST,SOFTWARE,Portrait mandatory only from 2028-08-11 (user may opt out where MS allow),
+EIDAS-2977-Annex§1-notes-sentinels,PID.VALUES.NATIONALITY_QU_QS,credentials,MUST,SOFTWARE,Legal addressee is the Member State; the PP emits the value,
+EIDAS-2977-Annex§1-notes-SD,PID.SD.PER_DATA_IDENTIFIER,credentials,MUST,SOFTWARE,Legal addressee is the Member State; the PP implements,C02;I01;I02
+EIDAS-2977-Annex§1-T2,PID.ATTRS.OPTIONAL_SCHEMA,credentials,CONDITIONAL-MUST,SOFTWARE,Optional attributes: definitions apply only when included,
+EIDAS-2977-Annex§2-T3-4,PID.LPID.MANDATORY,credentials,CONDITIONAL-MUST,SOFTWARE,Only PPs issuing legal-person PID (ARF has removed legal-person wallets pending business wallet),
+EIDAS-2977-Annex§3-T5,PID.ATTRS.MANDATORY_AND_METADATA,credentials,MUST,SOFTWARE,"issuing_authority, issuing_country mandatory; others optional",
+EIDAS-2977-Annex§3-T5-issuing_country,PID.VALUES.ISSUING_COUNTRY_ALPHA2,credentials,MUST,SOFTWARE,,
+EIDAS-2977-Annex§4,VCI.FORMATS.ALL_RULEBOOK,issuance,MUST,SOFTWARE,"""as applicable"": the law does not require both formats (ARF PID_02 does)",M15
+EIDAS-2977-Annex§4.1-doctype,PID.MDOC.DOCTYPE_NAMESPACE,credentials,MUST,SOFTWARE,mdoc PIDs,C16
+EIDAS-2977-Annex§4.1-devicekey,KA.PID_KEY_IN_WSCD,proofs,MUST,SOFTWARE,mdoc PIDs,
+EIDAS-2977-Annex§4.1-x5u-x5t,PID.MDOC.X5U_X5T_PROTECTED,credentials,MUST,SOFTWARE,mdoc PIDs,C16
+"EIDAS-2977-Annex§4.1(c),(h)",PID.MDOC.ENCODING,credentials,MUST,SOFTWARE,"mdoc PIDs; date rule ""unless otherwise indicated""",
+EIDAS-2977-Annex§4.2-SD,PID.SDJWT.RECURSIVE_SD,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,C02
+EIDAS-2977-Annex§4.2-nbf-exp,PID.SDJWT.NBF_EXP,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,C02
+EIDAS-2977-Annex§4.2-cnf,KA.PID_KEY_IN_WSCD,proofs,MUST,SOFTWARE,SD-JWT VC PIDs,C02
+EIDAS-2977-Annex§4.2-x5u-x5tS256,PID.SDJWT.X5U_X5TS256,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,C02
+EIDAS-2977-Annex§4.2-T7-8,PID.SDJWT.CLAIM_MAPPING,credentials,MUST,SOFTWARE,SD-JWT VC PIDs; via Art. 3(3),
+EIDAS-2977-Annex§4.2-vct,PID.SDJWT.VCT,credentials,MUST,SOFTWARE,SD-JWT VC PIDs,C02;M15
+EIDAS-2977-Annex§4.1-4.2-domestic,ORG.PID.PUBLISH_DOMESTIC_TYPES,operator,CONDITIONAL-MUST,OPERATOR,Only if a domestic namespace/type is used,
+EIDAS-2977-Annex§5,TRUST.SIGNER_CHAIN_TO_NOTIFIED_ANCHOR,context,MUST,NONE (Commission list),PP counterpart is Member State notification of its certificates (2980 Annex II §3(1)(h)),C02
+EIDAS-2979-AnnexIb-TR-WIA-3,WIA.PRESENTED_AT_PAR_AND_TOKEN,context,MUST,NONE (Wallet),Wallet sends WIA at PAR and token request,W01;W09
+EIDAS-2979-AnnexIb-TR-WIA-4,WIA.SIGNATURE_X5C,trust,MUST,SOFTWARE,"Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",W03
+EIDAS-2979-AnnexIb-TR-WIA-4.1,WIA.CHAIN_TO_WP_LIST,trust,MUST,SOFTWARE,"Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",W02
+EIDAS-2979-AnnexIb-TR-WIA-4.2-4.3,WIA.NOT_EXPIRED;WIA.POP_CNF,trust,MUST,SOFTWARE,"Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",W05;W04
+EIDAS-2979-AnnexIb-C_WIA-3,WIA.STATUS_EXP_NOT_TOKEN_EXP,trust,MUST,SOFTWARE,"Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",
+EIDAS-2979-AnnexIb-TR_KA-4,META.PROOF_TYPES_JWT_AND_ATTESTATION,metadata,CONDITIONAL-MUST,SOFTWARE,"Only issuers of device-bound credentials. Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",M07;M10
+EIDAS-2979-AnnexIb-TR_KA-4.1,META.NO_KA_FOR_UNBOUND,metadata,CONDITIONAL-MUST,SOFTWARE,"Only non-device-bound credentials. Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",M07
+EIDAS-2979-AnnexIb-TR_KA-5,KA.CHAIN_TO_WP_LIST,proofs,CONDITIONAL-MUST,SOFTWARE,"When a KA is received. Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",S14;W10
+EIDAS-2979-AnnexIb-TR_KA-6-6.1,KA.JWT_PROOF_ATTESTED_KEY0,proofs,CONDITIONAL-MUST,SOFTWARE,"When a KA arrives in a jwt proof. Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",S03;S04
+EIDAS-2979-AnnexIb-TR_KA-7,KA.ATTESTATION_PROOF_NONCE,proofs,CONDITIONAL-MUST,SOFTWARE,"When a KA arrives in an attestation proof. Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",
+EIDAS-2979-AnnexIb-TR_KA-8,KA.PID_KEY_IN_WSCD,proofs,MUST,SOFTWARE,"Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",
+EIDAS-2979-AnnexIb-C_KA-1,PRIV.NO_KA_IDX_AS_WALLET_ID,privacy,MUST,SOFTWARE,"Sentence sits in a NOTE under C_KA-1 (whose body binds KA content, i.e. wallet providers). Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",
+EIDAS-2979-AnnexIb-C_KA-3,KA.STATUS_EXP_NOT_TOKEN_EXP,proofs,MUST,SOFTWARE,"Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",
+EIDAS-2979-AnnexIb-LC_WIA-1-LC_KA-1,META.PREFERRED_STATUS_PERIODS,metadata,MAY,SOFTWARE,"Optional; placement rules (LC_WIA-1.1 / LC_KA-1.1 ""shall"") apply only if the parameters are used",
+EIDAS-2979-AnnexIb-LC_GEN-3,VALIDITY.PID_LE_STATUS_EXP,credentials,MUST,SOFTWARE,"Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",
+EIDAS-2979-AnnexIb-LC_GEN-4,REVOC.CHAIN_WIA_KA,status,CONDITIONAL-MUST,SOFTWARE,"Only PIDs with technical validity > 24 h. Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",
+EIDAS-2979-AnnexIb-SA-3,CRYPTO.ES256_384_512,signer,MUST,SOFTWARE,"ES256/ES384/ES512 (SA-1). Legal hook: 2979 Annex Ib is made binding by 2979 Art. 6(2), addressed to wallet providers; issuer-side force comes via 2977 Art. 3(9) (PP) and 1569 REQ-EAASP-4.2.2.3-03 (QEAA/PuB-EAA); no direct hook for nqEAA",M07
+EIDAS-2979-AnnexII-EAA-6.2.10.1-16,STATUS.CLIENT_TSL,status,MUST,SOFTWARE,"Annex II is attached via 2979 Art. 8 (wallet providers) and pulled in for issuers by 2977 Art. 4(1)/Annex §4 and 1569 Annex II, which reference it for credential formats; whether this WIA/KA-status clause reaches issuers through those references is arguable",
+EIDAS-2979-AnnexII-intro,FMT.ETSI_119472_1,credentials,MUST,SOFTWARE,"Format standards: PP via 2977 Annex §4, EAA via 2977 Art. 4(1) (""at least one""), QEAA/PuB-EAA via 1569 Annex II",C02;C16
+EIDAS-2979-AnnexII-EAA-4.2.11.1-06,STATUS.NO_SUSPENSION,status,CONDITIONAL-MUST,SOFTWARE,Only when a status element is used,C03
+EIDAS-2979-AnnexII-EAA-4.2.11.1-06.1,STATUS.MONOTONIC,status,CONDITIONAL-MUST,SOFTWARE,Only revoked attestations,
+EIDAS-2979-AnnexII-EAA-4.2.13-03,STATUS.SHORTLIVED_OR_LIST,status,MAY,SOFTWARE,Relief clause: revocation not required for validity <= 24 h,C03
+EIDAS-2979-AnnexII-PuB-EAA-4.6.3-04,TRUST.SIGNER_CERT_PROFILE_119412_6,trust,MUST,OPERATOR,Certificate profile,
+EIDAS-2979-AnnexII-EAA-5.2.10.1-06,STATUS.SDJWT_TSL,status,MAY,SOFTWARE,Law pins draft-ietf-oauth-status-list-20,C03
+EIDAS-2979-AnnexII-EAA-6.2.10.1-02,STATUS.MDOC_MECHANISM,status,MUST,SOFTWARE,mdoc; short-lived (<= 24 h) exempt (02.1),I06
+EIDAS-2979-AnnexII-EAA-6.2.10.1-03.1,STATUS.NO_SUSPENSION,status,CONDITIONAL-MUST,SOFTWARE,Only when a status element/status list is used,C03
+EIDAS-2979-AnnexII-EAA-6.2.10.1-07-08,STATUS.MDOC_CWT_PROFILE,status,CONDITIONAL-MUST,SOFTWARE,Only mdoc credentials using an MSO revocation list,I06
+EIDAS-2979-AnnexII-EAA-6.2.10.1-11.2,STATUS.MDOC_ID_UNIQUE_PER_MSO,status,CONDITIONAL-MUST,SOFTWARE,Only mdoc identifier-list mechanism,I06
+EIDAS-2979-AnnexII-EAA-6.2.10.1-12.1-13.2,STATUS.MDOC_BITS1_UNIQUE_IDX,status,CONDITIONAL-MUST,SOFTWARE,Only mdoc status-list mechanism,I06
+EIDAS-2982-Art4(2),META.ENTITLEMENT,context,MUST,NONE (Wallet),,
+EIDAS-2982-Art4(3)(c),ISS.PID_ACTIVATION_LOA_HIGH,context,MUST,NONE (Wallet),PP may use the mechanism; no PP duty,
+EIDAS-2982-AnnexI-intro,VCI.PROFILE.OID4VCI_HAIP,context,MUST,NONE (Wallet provider; issuer indirect),"Legal hook: 2982 Annexes are made binding by 2982 Art. 4(1)/5(1), addressed to wallet providers; issuer duty is indirect (interoperability)",M01;M02;M03;M04;M07;N01;T01;C01
+EIDAS-2982-AnnexI-ISS-MDATA-REG_CERT-4.2.3-04,META.REGCERT_BY_VALUE,metadata,MUST,SOFTWARE,"Registration certificates exist only after registration (848 applies 2026-12-24); Wallet validation from 2028-08-11 (2982 Art. 3(4)). Legal hook: 2982 Annexes are made binding by 2982 Art. 4(1)/5(1), addressed to wallet providers; issuer duty is indirect (interoperability)",M18
+EIDAS-2982-AnnexI-ISS-MDATA-EAA-REUSE-POL-4.2.4.2-09,META.REUSE_POLICY.REISSUE_TRIGGER_UNUSED,metadata,CONDITIONAL-MUST,SOFTWARE,"Only if id = 'arf_annex_ii' and details contains once_only or per-relying-party. Legal hook: 2982 Annexes are made binding by 2982 Art. 4(1)/5(1), addressed to wallet providers; issuer duty is indirect (interoperability)",M19
+EIDAS-2982-AnnexII-ISO18013-SUPPORT-01,MDOC.NO_SERVER_RETRIEVAL,credentials,MUST,SOFTWARE,Prohibition; Annex II (presentation) attached via 2982 Art. 5 (wallet providers),
+EIDAS-2982-AnnexII-intro,INTEROP.PRESENTATION_PROFILE,context,MUST,NONE (Wallet / Relying Party),Presentation profile,
+EIDAS-2980-AnnexII-§3(1)(h),TRUST.SIGNER_CERT_PROFILE_119412_6,context,MUST,NONE (Member States; PP obtains certificate),MS notification content,C02;C16
+EIDAS-2980-AnnexII-§3(1)(g),ORG.PUBLISH_TERMS_URL,context,MUST,NONE (Member States),PP must have a policies/T&C page to be notified (operator),
+EIDAS-2980-AnnexII-§2(1)(h),TRUST.WP_ANCHORS_FROM_LIST,context,MUST,NONE (Member States; wallet providers),Source of WIA/KA trust anchors the issuer consumes,
+EIDAS-848-AnnexI-pt12(b)-(e),META.ENTITLEMENT,metadata,MUST,OPERATOR,Registration data; applies from 2026-12-24,
+EIDAS-848-Art5(2)-(3),ORG.REG.KEEP_UPDATED,operator,MUST,OPERATOR,Applies from 2026-12-24,
+EIDAS-848-AnnexIII-pt3,ORG.REG.REGISTER_AS_WRP,context,MUST,NONE (Registrar),Applies from 2026-12-24,
+EIDAS-848-AnnexIV-pt3,META.ACCESS_CERT_PROFILE,context,MUST,NONE (Access CA),Applies from 2026-12-24,
+EIDAS-848-AnnexV-pt3,META.REGCERT_PROFILE_119475,context,MUST,NONE (Registration-certificate provider),Applies from 2026-12-24,
+EIDAS-848-Art6(7),ORG.REG.CANCEL_ON_DECOMMISSION,operator,CONDITIONAL-MUST,OPERATOR,Only when the WRP stops relying on wallets; from 2026-12-24,
+EIDAS-1569-Art3(1),ORG.ISSUANCE_POLICY_119471,operator,MUST,OPERATOR,Annex I = ETSI TS 119 471 (TSP policy standard),
+EIDAS-1569-Art3(2),EAA.RULEBOOK.CONFORMANCE,credentials,CONDITIONAL-MUST,SOFTWARE,Only attestations in schemes registered in the catalogue,
+EIDAS-1569-Art4(2),STATUS.WRITE_AUTHZ,status,MUST,OPERATOR,Allocation of revocation authority,
+EIDAS-1569-Art4(3),REVOC.TRIGGERS_QEAA,status,CONDITIONAL-MUST,OPERATOR,Only attestations valid > 24 h,
+EIDAS-1569-Art4(4),PRIV.STATUS_IDX_RANDOM,privacy,MUST,SOFTWARE,,C04
+EIDAS-1569-Art4(5),STATUS.LIST_SIGNER_AUTHENTICATED,status,MUST,SOFTWARE,,C03
+EIDAS-1569-AnnexI-REQ-EAASP-4.2.2.3-02,META.SIGNED_X5C_ACCESS_CERT,metadata,MUST,SOFTWARE,,M17
+EIDAS-1569-AnnexI-REQ-EAASP-4.2.2.3-03,WIA.VERIFY,trust,MUST,SOFTWARE,,W01;W09;W02
+EIDAS-1569-AnnexI-REQ-EAASP-6.1-02,ORG.REVOCATION_POLICY,operator,MUST,OPERATOR,,
+EIDAS-1569-AnnexI-REQ-EAASP-6.3-02,ORG.CHANGE_NOTICE_SUPERVISOR,operator,MUST,OPERATOR,,
+EIDAS-1569-AnnexI-REQ-EAASP-7.5.3-01B,CRYPTO.ALG_ALLOWLIST_ACM,signer,MUST,SOFTWARE,,M08;M12;T08;S05
+EIDAS-1569-AnnexI-REQ-EAASP-7.5.3-02,KEY.PROTECTION_HSM,signer,MUST,OPERATOR,QSCD / certified device procurement,
+EIDAS-1569-AnnexI-REQ-EAASP-7.9-02,LOG.REDACT_SENSITIVE,audit,MUST,OPERATOR,,
+EIDAS-1569-AnnexII,EAA.RULEBOOK.CONFORMANCE,credentials,MUST,SOFTWARE,,C02;C03;C16
+EIDAS-1566-Annex,ISS.SUBJECT.IDENTITY_VERIFIED,subject,MUST,OPERATOR,Applies from 2027-08-19,
+EIDAS-798-Annex§1-2,ISS.IDPROOF.ONBOARDING_119461,subject,CONDITIONAL-MUST,OPERATOR,Only Wallet onboarding by eID at LoA substantial plus additional remote procedures (Art. 5a(24)),
+EIDAS-798-OVR-7.10-01,LOG.EVIDENCE_RETENTION,audit,MAY,OPERATOR,"Note 1: evidence retention ""can"" be done by the PP instead of the IPSP",
+EIDAS-2160-Art4(3)(b),LOG.ISSUANCE_AUDIT,audit,MUST,OPERATOR,"Non-qualified TSPs (nqEAA providers); QTSPs via 2530 Art. 2 mutatis mutandis. Not PP. Records = onboarding/identity verification data, user authentication data, status changes of the TSP's certificates/cryptographic material",
+EIDAS-2160-Art4(3)(a),ORG.PUBLISH_IDV_METHOD,operator,CONDITIONAL-MUST,OPERATOR,"""where applicable""; QTSPs via 2530 Art. 2",
+EIDAS-2160-Art4(6),ORG.RISK_MANAGEMENT,operator,MUST,OPERATOR,QTSPs via 2530 Art. 2,
+EIDAS-2530-Art1(1)(d),ORG.CHANGE_NOTICE_SUPERVISOR,operator,MUST,OPERATOR,,
+EIDAS-2530-Art3(7)(d),KEY.DESTRUCTION_ON_TERMINATION,signer,MUST,OPERATOR,Termination-plan content,
+EIDAS-2977-logging-not-found,LOG.ISSUANCE_AUDIT,context,N/A,NONE,"Marker row; re-checked: no logging/audit clause in consolidated 2977 (only ""log"" hits are absent); wallet logging is 2979 Art. 9 (""wallet instances shall log"")",
+SPEC-OID4VCI-4.1.1-offer,VCI.OFFER.SHAPE,oauth,CONDITIONAL-MUST,SOFTWARE,"Only if the pre-authorized code flow is offered (HAIP mandates authorization_code, not pre-auth)",T01
+SPEC-OID4VCI-4.1.1-preauth-single-use,VCI.TOKEN.PREAUTH_SINGLE_USE,oauth,CONDITIONAL-MUST,SOFTWARE,"Only if the pre-authorized code flow is offered (HAIP mandates authorization_code, not pre-auth)",T04
+SPEC-OID4VCI-6.1-token-preauth,VCI.TOKEN.PREAUTH_REQUEST,oauth,CONDITIONAL-MUST,SOFTWARE,"Only if the pre-authorized code flow is offered (HAIP mandates authorization_code, not pre-auth)",T01;T02
+SPEC-OID4VCI-6.3-unknown-code,VCI.TOKEN.INVALID_GRANT,oauth,CONDITIONAL-MUST,SOFTWARE,"Only if the pre-authorized code flow is offered (HAIP mandates authorization_code, not pre-auth); error format per RFC 6749 §5.2 (error REQUIRED)",T03
+SPEC-OID4VCI-6.3-tx_code,VCI.TOKEN.TX_CODE_ERRORS,oauth,CONDITIONAL-MUST,SOFTWARE,Only pre-auth flows using tx_code; error format per RFC 6749 §5.2,T05;T06;T07
+SPEC-OID4VCI-7.1-nonce-endpoint,VCI.NONCE.ENDPOINT,oauth,CONDITIONAL-MUST,SOFTWARE,Only issuers that require c_nonce (HAIP §4.1: required whenever key binding is offered),N01;N03;N04
+SPEC-OID4VCI-7.2-no-store,VCI.NONCE.NO_STORE,oauth,CONDITIONAL-MUST,SOFTWARE,Only if a Nonce Endpoint is offered,N02
+SPEC-OID4VCI-8.2-identifier-xor,VCI.CRED.IDENTIFIER_XOR,issuance,MUST,SOFTWARE,The MUSTs bind the Wallet's request; issuer-side duty is the §8.3.1.2 error (invalid_credential_request),C07;C08
+SPEC-OID4VCI-8.2-proofs-only,VCI.CRED.PROOFS_SHAPE,issuance,CONDITIONAL-MUST,SOFTWARE,Only configurations with proof_types_supported (key binding),C06;C11;C12;C13
+SPEC-OID4VCI-8.3-response,VCI.CRED.RESPONSE_SHAPE,issuance,MUST,SOFTWARE,202 + transaction_id only if deferral is used,C01;C14
+SPEC-OID4VCI-8.3.1.2-error-codes,VCI.CRED.ERROR_CODES,issuance,MUST,SOFTWARE,"The specific code value is SHOULD (""error ... SHOULD be a single ASCII error code from the following"")",C09;C10;R06
+SPEC-OID4VCI-9-deferred,VCI.DEFER.TRANSACTION_ID,issuance,CONDITIONAL-MUST,SOFTWARE,"Only if the issuer supports deferred issuance; ""Support for this endpoint is OPTIONAL""",R05;D01;D02;D03;D04;D05
+SPEC-OID4VCI-11-notification,VCI.NOTIF.VALIDATION,issuance,CONDITIONAL-MUST,SOFTWARE,"Only if the issuer offers a Notification Endpoint; ""Support for this endpoint is OPTIONAL""",C15;R04;D01;C17;C18
+SPEC-OID4VCI-12.2.2-well-known,VCI.META.WELL_KNOWN_PATH,metadata,MUST,SOFTWARE,"Unconditional under HAIP §4.1 (""MUST support metadata retrieval"")",M01
+SPEC-OID4VCI-12.2.4-metadata,VCI.META.FIELDS,metadata,MUST,SOFTWARE,,M02;M03;M04;M07;M16
+SPEC-OID4VCI-12.2.4-batch_size,BATCH.SUPPORT,issuance,CONDITIONAL-MUST,SOFTWARE,"Only if batch_credential_issuance is advertised (OPTIONAL; HAIP: ""MUST indicate whether batch issuance is supported"")",M09;C04;C05
+SPEC-OID4VCI-12.2.4-key_attestations_required,META.KEY_STORAGE_LEVELS,metadata,CONDITIONAL-MUST,SOFTWARE,Present only if the issuer requires KAs,M10;S14
+SPEC-OID4VCI-A.2-mso_mdoc,FMT.MDOC.CONFIG_AND_ENCODING,credentials,MUST,SOFTWARE,mdoc configurations only. A.2.2: header alg -7 on P-256 also matches metadata value -9,M15;C16;I02;I05
+SPEC-OID4VCI-A.3-dc+sd-jwt,FMT.SDJWT.CONFIG_AND_ENCODING,credentials,MUST,SOFTWARE,SD-JWT VC configurations only,M15;C02
+SPEC-OID4VCI-D-key-attestation,KA.VERIFY,proofs,CONDITIONAL-MUST,SOFTWARE,Only if KAs are used; the KA shape MUSTs bind the KA producer (Wallet Provider),
+SPEC-OID4VCI-F.1-typ,VCI.F1.PROOF_TYP,proofs,MUST,SOFTWARE,jwt proof type (key-bound configurations; always for PIDs); issuer check via F.4,S06
+SPEC-OID4VCI-F.1-alg,VCI.F1.PROOF_ALG_ASYMMETRIC,proofs,MUST,SOFTWARE,jwt proof type; issuer check via F.4,S05;M08
+SPEC-OID4VCI-F.1-key-header,VCI.F1.KEY_HEADER_EXCLUSIVE,context,MUST,NONE (Wallet),Wallet-side construction rule; F.4 does not list it as an issuer check,
+SPEC-OID4VCI-F.1-aud,VCI.F1.PROOF_AUD,proofs,MUST,SOFTWARE,Value check also follows from RFC 7519 §4.1.3,S02
+SPEC-OID4VCI-F.1-iat,VCI.F1.PROOF_IAT,proofs,MUST,SOFTWARE,Window is issuer policy,S08
+SPEC-OID4VCI-F.1-nonce,VCI.NONCE.C_NONCE_VALID,oauth,CONDITIONAL-MUST,SOFTWARE,Only if the issuer has a Nonce Endpoint,S03;S04;S15
+SPEC-OID4VCI-F.1-iss-anon,VCI.F1.PROOF_ISS_ANON_PREAUTH,proofs,CONDITIONAL-MUST,SOFTWARE,"Only anonymous pre-authorized flows; Wallet MUST omit iss, issuer acceptance implied",
+SPEC-OID4VCI-F.4-verification,VCI.F4.PROOF_SIGNATURE,proofs,MUST,SOFTWARE,,S01;S07
+SPEC-RFC9449-4.3-3,DPOP.JTI_PRESENT,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T15
+SPEC-RFC9449-4.3-4,DPOP.TYP,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T09
+SPEC-RFC9449-4.3-5,DPOP.ALG_ASYMMETRIC,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T08
+SPEC-RFC9449-4.3-6,DPOP.SIGNATURE,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T14
+SPEC-RFC9449-4.3-7,DPOP.NO_PRIVATE_KEY,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T10
+SPEC-RFC9449-4.3-8,DPOP.HTM,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T11
+SPEC-RFC9449-4.3-9,DPOP.HTU,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T12
+SPEC-RFC9449-4.3-11,DPOP.IAT_WINDOW,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T13
+SPEC-RFC9449-4.3-12,DPOP.ATH,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4); protected resource (credential endpoint),S11
+SPEC-RFC9449-11.1-jti-replay,DPOP.JTI_REPLAY,oauth,MAY,SOFTWARE,DPoP in use (mandatory under HAIP §4),S13
+SPEC-RFC9449-7.1-key-binding,DPOP.KEY_BOUND_TO_TOKEN,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),S12;A21
+SPEC-RFC9449-5-token-type,DPOP.TOKEN_TYPE,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),T01
+SPEC-RFC9449-7.1-scheme,DPOP.AUTH_SCHEME,oauth,MUST,SOFTWARE,DPoP in use (mandatory under HAIP §4),S10
+SPEC-RFC9449-7.2-no-bearer-downgrade,DPOP.NO_BEARER_DOWNGRADE,oauth,CONDITIONAL-MUST,SOFTWARE,Only resources supporting both DPoP and Bearer,S09
+SPEC-RFC9449-8-9-nonces,DPOP.SERVER_NONCE,oauth,MAY,SOFTWARE,Server-provided DPoP nonces are optional,
+SPEC-HAIP-4-auth-code-par,OAUTH.AUTH_CODE_AND_PAR,oauth,MUST,SOFTWARE,PAR only when the Authorization Endpoint is used,M14;A02
+SPEC-HAIP-4-pkce,OAUTH.PKCE_S256,oauth,MUST,SOFTWARE,Via FAPI 2.0 provisions,M13;A07;A08
+SPEC-HAIP-4-dpop,OAUTH.DPOP_REQUIRED,oauth,MUST,SOFTWARE,,M12;T01
+SPEC-HAIP-4-batch-metadata,BATCH.SUPPORT,issuance,MUST,SOFTWARE,Batch support itself is optional; the MUST is to signal it by including or omitting the parameter,M09
+SPEC-HAIP-4.1-scope,VCI.META.SCOPE_PER_CONFIG,metadata,MUST,SOFTWARE,,M06
+SPEC-HAIP-4.1-nonce-endpoint,VCI.META.NONCE_ENDPOINT_WHEN_BINDING,metadata,CONDITIONAL-MUST,SOFTWARE,Only if any configuration requires key binding,M05
+SPEC-HAIP-4.5.1-ka-x5c,KA.CHAIN_TO_WP_LIST,context,CONDITIONAL-MUST,NONE (KA producer / Wallet Provider),Only KAs in OID4VCI Appendix D format,W10
+SPEC-HAIP-6.1-exp-or-status,FMT.SDJWT.EXP_OR_STATUS,credentials,CONDITIONAL-MUST,SOFTWARE,Only when the issuer limits validity (itself RECOMMENDED),C02
+SPEC-HAIP-6.1-cnf-jwk,BIND.DEVICE_BOUND,proofs,CONDITIONAL-MUST,SOFTWARE,Only configurations requiring holder binding,C02
+SPEC-HAIP-6.1.1-x5c,FMT.SDJWT.X5C_NO_ANCHOR,credentials,MUST,SOFTWARE,SD-JWT VC,C02
+SPEC-TSL-4.1-encoding,STATUS.TSL.ENCODING,status,CONDITIONAL-MUST,SOFTWARE,Only if Token Status List is used,C03
+SPEC-TSL-5.1-token-claims,STATUS.TSL.TOKEN_CLAIMS,status,MUST,SOFTWARE,Status List Token in JWT; exp and ttl are RECOMMENDED only,C03
+SPEC-TSL-6.2-reference,STATUS.TSL.REFERENCE,status,CONDITIONAL-MUST,SOFTWARE,Only when the status_list mechanism is used,C03
+SPEC-TSL-8.2-media-type,STATUS.TSL.MEDIA_TYPE,status,MUST,SOFTWARE,Status Provider responses,C03
+SPEC-TSL-13.2-fresh-entry,STATUS.TSL.FRESH_ENTRY_PER_CREDENTIAL,status,CONDITIONAL-MUST,SOFTWARE,Only re-issued or batch-issued Referenced Tokens,C04
+SPEC-TSL-13.3-no-double-allocation,STATUS.TSL.NO_DOUBLE_ALLOCATION,status,MUST,SOFTWARE,Preventing all double allocation is RECOMMENDED; unintended double allocation MUST be prevented,C04
+SPEC-SDJWTVC-typ,FMT.SDJWT.TYP,credentials,MUST,SOFTWARE,,C02
+SPEC-SDJWTVC-vct,FMT.SDJWT.VCT_REQUIRED,credentials,MUST,SOFTWARE,"""equal to the configuration"" comes from OID4VCI A.3.2",C02;M15
+SPEC-SDJWTVC-never-sd,FMT.SDJWT.NEVER_SD_CLAIMS,credentials,MUST,SOFTWARE,Prohibition (MUST NOT),C02
+SPEC-ISO18013-5-issuerauth-x5chain,FMT.MDOC.ISSUERAUTH_X5CHAIN,credentials,UNVERIFIED,SOFTWARE,ISO/IEC 18013-5 is paywalled; only OID4VCI A.2.4 checked (IssuerSigned per ISO),C16;I01
+SPEC-ISO18013-5-mso-verify,FMT.MDOC.MSO_VERIFIES,credentials,UNVERIFIED,SOFTWARE,ISO/IEC 18013-5 is paywalled,C16;I01;I02;I04
+SPEC-RFC8414-3-as-metadata,OAUTH.AS_METADATA,metadata,MUST,SOFTWARE,"Unconditional under HAIP §4.1 (""The Authorization Server MUST support metadata according to [RFC8414]"")",M11
+SPEC-RFC6749-5.2-token-errors,OAUTH.TOKEN_ERROR_BODY,oauth,MUST,SOFTWARE,"""never 5xx"" is implied by the 400 default",R01
+SPEC-RFC6750-3-bearer-challenge,OAUTH.RESOURCE_401_CHALLENGE,oauth,CONDITIONAL-MUST,SOFTWARE,"Bearer-token resources only; 401 for invalid_token is SHOULD; for DPoP-bound tokens RFC 9449 §7.1 says the server ""can respond with a challenge""; OID4VCI §8.3.1.1 cites RFC 6750 §3 only ""such as""",R02;R03;R04;R05;D03
+SPEC-RFC9110-15.5.6-methods,HTTP.METHOD_NOT_ALLOWED,issuance,CONDITIONAL-MUST,SOFTWARE,Only when a 405 is sent (then an Allow header is required),N04;R07
+SPEC-FAPI2-5.3.2.2-par-required,OAUTH.PAR_REQUIRED,oauth,MUST,SOFTWARE,Flows that use the authorization endpoint (HAIP §4: PAR where the authorization endpoint is used),M14;A06
+SPEC-RFC9126-2-par-request,OAUTH.PAR_REQUEST,oauth,MUST,SOFTWARE,PAR endpoint (FAPI 2.0 §5.3.2.2 item 2),
+SPEC-RFC9126-2.2-request-uri-once,OAUTH.PAR_REQUEST_URI_ONCE,oauth,MUST,SOFTWARE,PAR endpoint,A04;A05
+SPEC-RFC7636-4-pkce-verifier,OAUTH.PKCE_VERIFIER,oauth,MUST,SOFTWARE,Authorization code flow (PKCE required by FAPI 2.0 §5.3.2.2 item 5),A07;A11
+SPEC-FAPI2-5.3.2.1-code-once-60s,OAUTH.CODE_ONCE_60S,oauth,MUST,SOFTWARE,Authorization code flow,A13
+SPEC-RFC9449-10-code-dpop-bound,OAUTH.CODE_DPOP_BOUND,oauth,MUST,SOFTWARE,PAR with DPoP (FAPI 2.0 §5.3.2.1 item 12),
+SPEC-RFC9700-2.1-redirect-exact,OAUTH.REDIRECT_URI_EXACT,oauth,MUST,SOFTWARE,Authorization code flow,A09;A12
+SPEC-RFC9207-2-iss,OAUTH.AUTHZ_RESPONSE_ISS,oauth,MUST,SOFTWARE,Authorization code flow (FAPI 2.0 §5.3.2.2 item 7),A03
+SPEC-FAPI2-5.3.2.2-response-type-code,OAUTH.RESPONSE_TYPE_CODE,oauth,MUST,SOFTWARE,Flows that use the authorization endpoint,A10
+SPEC-FAPI2-5.3.2.2-no-307,OAUTH.REDIRECT_303,oauth,MUST,SOFTWARE,Redirects from the authorization endpoint and the login,
+SPEC-FAPI2-5.3.4-no-token-in-query,OAUTH.NO_TOKEN_IN_QUERY,issuance,MUST,SOFTWARE,Credential endpoint (FAPI 2.0 resource server),A18
+SPEC-RFC6749-4.1.2.1-access-denied,OAUTH.ACCESS_DENIED,oauth,MUST,SOFTWARE,Authorization code flow,A15
+SPEC-HAIP-4.4.1-wia-required,WIA.REQUIRED_AT_PAR_AND_TOKEN,trust,MUST,SOFTWARE,PAR and token endpoints,W01;W09
+SPEC-HAIP-4.4.1-client-id-sub,WIA.CLIENT_ID_IS_SUB,trust,MUST,SOFTWARE,Attestations in the format of OID4VCI Appendix E,A14;W06
+SPEC-ABCA07-9-pop-fresh,WIA.POP_FRESH,trust,MUST,SOFTWARE,Client attestation PoP at PAR and token endpoints,W07;W08
+SPEC-ABCA07-9-cnf-public,WIA.CNF_PUBLIC,trust,MUST,SOFTWARE,Client attestation at PAR and token endpoints,
+ARF-WUA_25-not-revoked,WIA.CLIENT_STATUS,trust,MUST,SOFTWARE,At issuance; the 24-hour re-check of live PIDs is M4,
+SPEC-OID4VCI-6.2-authz-details,VCI.AUTHZ_DETAILS,oauth,CONDITIONAL-MUST,SOFTWARE,Only if authorization_details is supported (OID4VCI §5.1.1: MAY),A19
+SPEC-OID4VCI-5.1.2-scope,VCI.SCOPE_TO_CONFIG,oauth,MUST,SOFTWARE,Scope is MAY in OID4VCI §5.1.2; HAIP §4.1 and §4.3 make it how a Wallet names the Credential Type,M06;M22
+SPEC-OID4VCI-5.1.3-issuer-state,VCI.ISSUER_STATE,oauth,CONDITIONAL-MUST,SOFTWARE,"Only offers that carry issuer_state (OPTIONAL, OID4VCI §4.1.1)",A20
+SPEC-HAIP-4.2-offer-auth-code,VCI.OFFER.AUTH_CODE_GRANT,oauth,MUST,SOFTWARE,Issuer-initiated flows (HAIP §4),A20
+SPEC-ABCA07-10.3-refresh-bound,OAUTH.REFRESH_BOUND,oauth,MUST,SOFTWARE,When refresh tokens are issued (HAIP §4.4: RECOMMENDED; ARF ISSU_63 asks for re-issuance),A17
+SPEC-RFC8414-2-as-metadata-m3,OAUTH.AS_METADATA_M3,metadata,MUST,SOFTWARE,Authorization code flow offered,M13;M14;A01
+SPEC-OID4VCI-12.2.2-signed-format,VCI.META.SIGNED_FORMAT,metadata,CONDITIONAL-MUST,SOFTWARE,"Signed metadata is MAY in OID4VCI; HAIP §4.1 requires it where ecosystem policy needs issuer authentication beyond TLS (ARF ISSU_22, ISSU_32)",M23;M17
+ARF-WUA_32-client-status-period,META.PREFERRED_CLIENT_STATUS_PERIOD,metadata,CONDITIONAL-MUST,SOFTWARE,Only a provider that has a minimum remaining revocation maintenance period for WIAs,M21
+ETSI-119602-6.3.15-lote-authentic,TRUST.LOTE_AUTHENTIC,trust,MUST,SOFTWARE,Reading a LoTE (TRUST.LOTE_PARSER_119602),
+SPEC-RFC6960-3.2-revocation-fetched,TRUST.REVOCATION_FETCHED,trust,MUST,SOFTWARE,Certificates on a WIA or KA path whose status comes from a CRL distribution point or OCSP,
+ARF-ISSU_18-plug-required,ISS.IDPROOF.PLUG_REQUIRED,subject,MUST,SOFTWARE,"Startup check in production; the identity proofing itself is the operator's duty (ARF-ISSU_18, EIDAS-2977-Art3(7))",
+SPEC-OID4VCI-10-request-encryption,VCI.ENC.REQUEST,issuance,CONDITIONAL-MUST,SOFTWARE,Only if the issuer publishes credential_request_encryption; encryption on top of TLS is OPTIONAL,E01;E02;E05
+SPEC-OID4VCI-10-response-encryption,VCI.ENC.RESPONSE,issuance,CONDITIONAL-MUST,SOFTWARE,Only if the issuer publishes credential_response_encryption and the wallet sends credential_response_encryption,E01;E02;E03;E04
