@@ -255,6 +255,7 @@ BROKEN: list[tuple[str, dict[str, Any], str]] = [
         "cannot have revoke.slot",
     ),
     ("an empty configuration id", {"moodle": OperatorScope(configurations=frozenset({""}))}, "non-empty list of ids"),
+    ("a scope that is no OperatorScope", {"moodle": {"permissions": ["offers"]}}, "must be an OperatorScope"),
     ("a rate of zero", {"moodle": OperatorScope(rate_limit_per_minute=0)}, "at least 1 request per minute"),
     ("a rate that is no number", {"moodle": OperatorScope(rate_limit_per_minute=True)}, "at least 1 request"),
 ]
@@ -301,6 +302,7 @@ def test_scopes_come_from_the_environment(pki: Pki) -> None:
         ('{"moodle": {"permissions": ["offers"], "configurations": "x"}}', "array of ids"),
         ('{"moodle": {"permissions": ["offers"], "tokens": 1}}', "takes permissions"),
         ('{"moodle": ["permissions"]}', "takes permissions"),
+        ('{"moodle": {"permissions": [1]}}', "array of names"),
         ('{"moodle": {"permissions": ["offers"], "configurations": [1]}}', "must be an array of ids"),
     ):
         with pytest.raises(ConfigError, match=reason):

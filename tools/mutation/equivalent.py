@@ -8,6 +8,10 @@ from __future__ import annotations
 
 EQUIVALENT: dict[str, str] = {
     # Operator scopes
+    "service.py:Issuer._within: drop: () in scope is not None and (not set(config_ids) <= set(scope.c...": (
+        "_scope returns a scope only when its configurations are set, so the empty fallback is never taken; it is "
+        "there for the type checker"
+    ),
     "service.py:Issuer._bound: drop: operator is None in operator is None or operator == 'admin'": (
         "operator_scopes is keyed by operator names, which are strings, so a None operator finds no scope and is "
         "not bound either way"
