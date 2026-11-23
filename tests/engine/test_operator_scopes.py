@@ -9,7 +9,7 @@ from __future__ import annotations
 import functools
 import json
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
@@ -257,6 +257,7 @@ BROKEN: list[tuple[str, dict[str, Any], str]] = [
     ("an empty configuration id", {"moodle": OperatorScope(configurations=frozenset({""}))}, "non-empty list of ids"),
     ("a scope that is no OperatorScope", {"moodle": {"permissions": ["offers"]}}, "must be an OperatorScope"),
     ("a rate of zero", {"moodle": OperatorScope(rate_limit_per_minute=0)}, "at least 1 request per minute"),
+    ("a rate given as text", {"moodle": OperatorScope(rate_limit_per_minute=cast(Any, "60"))}, "at least 1 request"),
     ("a rate that is no number", {"moodle": OperatorScope(rate_limit_per_minute=True)}, "at least 1 request"),
 ]
 
@@ -267,6 +268,13 @@ def test_a_scope_that_cannot_be_applied_stops_the_start(
 ) -> None:
     with pytest.raises(ConfigError, match=reason):
         Settings(**settings_kwargs(pki, operators=OPERATORS, operator_scopes=scopes))
+
+
+def test_the_lowest_rate_a_scope_may_set_is_one_request_a_minute(pki: Pki) -> None:
+    settings = Settings(
+        **settings_kwargs(pki, operators=OPERATORS, operator_scopes={"moodle": OperatorScope(rate_limit_per_minute=1)})
+    )
+    assert settings.scope_of("moodle").rate_limit_per_minute == 1
 
 
 def test_a_scope_for_a_configuration_the_deployment_does_not_issue_stops_the_start(

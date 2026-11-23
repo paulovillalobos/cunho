@@ -8,6 +8,10 @@ from __future__ import annotations
 
 EQUIVALENT: dict[str, str] = {
     # Operator scopes
+    "patch: F7 a reused code leaves its refresh token": (
+        "_code_reused closes the subject right after, and _close_subject deletes the refresh token of its login, the "
+        "same row, in the same logged transaction"
+    ),
     "service.py:Issuer._within: drop: () in scope is not None and (not set(config_ids) <= set(scope.c...": (
         "_scope returns a scope only when its configurations are set, so the empty fallback is never taken; it is "
         "there for the type checker"
