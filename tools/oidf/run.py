@@ -35,7 +35,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 WORK = Path(os.environ.get("OIDF_WORK", HERE / "_work")).resolve()
 SUITE_SOURCE = "https://gitlab.com/openid/conformance-suite.git"
-SUITE_COMMIT = "daca6ad2068468d42557ea1152f899cc3ac01a10"  # the source of the images compose.yml pins
+SUITE_COMMIT = "23353b36957d6466010de767c812d2c91ed37638"  # release-v5.3.4, the source of the images pinned below
 SUITE = "https://localhost.emobix.co.uk:8443"  # its own name, 127.0.0.1 from this machine
 ISSUER = "https://cunho.test"
 ALIAS = "cunho"
@@ -355,11 +355,12 @@ def signing_jwk(key_path: Path, chain_path: Path, kid: str) -> dict[str, Any]:
 
 
 # The suite's images, pinned by digest so an upstream change cannot alter a run without this file changing; bump them
-# on purpose, with SUITE_COMMIT, the source they were built from.
+# on purpose, with SUITE_COMMIT, the source they were built from. They are a release's (release-v5.3.4): the registry
+# keeps release images, while the images of master it drops within days, and a pin to one then fails to pull.
 MONGO = "mongo@sha256:b415b12f638e2685d06c58ab7fb5943577c50fadec6d9340ef67d21aeac72070"  # 6.0.13
 REGISTRY = "registry.gitlab.com/openid/conformance-suite"
-NGINX = f"{REGISTRY}/nginx@sha256:5ed25320272bb4d686f29b26d7d928cc1a22da8e2afc11e88c6758d95df492ba"
-SERVER = f"{REGISTRY}@sha256:06db5442303151f392f82a378089941348535619a1fca3c6c3197a9eb9ccff63"
+NGINX = f"{REGISTRY}/nginx@sha256:9a7850826fcc8690cd43373528f50e9551ba33bf8e4a40b67b13267b0aca3675"
+SERVER = f"{REGISTRY}@sha256:dcc4bd1fb7e9c00f048a67373fe2bec5ecf9feb45a6b5d55e237e5c30e5312c6"
 NETWORK = "cunho-oidf"
 
 

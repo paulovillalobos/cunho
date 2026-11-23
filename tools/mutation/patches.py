@@ -2364,8 +2364,8 @@ PATCHES: list[tuple[str, str, str, str]] = [
     (
         "MB4 every item has the same salt",
         "mdoc.py",
-        '"random": secrets.token_bytes(SALT_BYTES)',
-        '"random": bytes(SALT_BYTES)',
+        "cose.issuer_signed_item(digest_id, secrets.token_bytes(SALT_BYTES), name, value)",
+        "cose.issuer_signed_item(digest_id, bytes(SALT_BYTES), name, value)",
     ),
     (
         "MB5 validFrom is the end of validity",
@@ -3111,8 +3111,8 @@ PATCHES: list[tuple[str, str, str, str]] = [
     (
         "MJ2 the credential endpoint does not gate the wallet",
         "service.py",
-        "        self._wallet_gate(config, grant)\n        proven = self._proofs(",
-        "        proven = self._proofs(",
+        '        self._wallet_gate(config, grant)\n        proofs = body.get("proofs")',
+        '        proofs = body.get("proofs")',
     ),
     (
         "MJ3 the collection of a held issuance does not gate the wallet",
@@ -3440,9 +3440,8 @@ PATCHES: list[tuple[str, str, str, str]] = [
     (
         "P5A18 a token leaves what the subject is for to expire before it",
         "service.py",
-        '        self.store.put("subject-token", subject_ref, 1, self._subject_window())\n'
-        "        self._keep_configs(subject_ref)\n",
-        '        self.store.put("subject-token", subject_ref, 1, self._subject_window())\n',
+        "  # a refusal before this token is behind the wallet now\n        self._keep_configs(subject_ref)\n",
+        "  # a refusal before this token is behind the wallet now\n",
     ),
     (
         "P5A19 an issuance leaves what the subject is for to expire before it",
