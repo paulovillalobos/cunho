@@ -240,7 +240,12 @@ def create_app(
     # Relying parties poll status lists; a verifier behind one address may check many credentials, so the
     # group has its own, larger budget (review 5, N5-M3).
     limiters["status"] = RateLimiter(settings.status_rate_limit_per_minute)
-    operator_limiter = RateLimiter(settings.operator_rate_limit_per_minute)
+    # Each operator its own budget, so a token a learning platform holds for its learners cannot use up the
+    # operator console's: by default operator_rate_limit_per_minute, or what the operator's scope sets.
+    operator_limiters = {
+        name: RateLimiter(settings.scope_of(name).rate_limit_per_minute or settings.operator_rate_limit_per_minute)
+        for name in {"admin", *settings.operators}
+    }
 
     async def work(fn: Callable[..., T], *args: Any) -> T:
         return await run_in_threadpool(fn, *args)
@@ -444,13 +449,19 @@ def create_app(
             headers={"Cache-Control": f"max-age={settings.status_token_ttl}", "Vary": "Accept"},
         )
 
-    async def admin(request: Request) -> str:
-        """Authenticate first: operators get their own limit, failed attempts the anonymous one."""
-        authorization = request.headers.get("authorization")
+    async def admin(request: Request, permission: str | None) -> str:
+        """Authenticate first: operators get their own limit, failed attempts the anonymous one; then the operator's
+        token must allow `permission` (operator_scopes), unless the route decides that itself."""
+        # One Authorization header, one token: with two, which one counts would depend on the server and every proxy
+        # on the way, so none does.
+        authorizations = request.headers.getlist("authorization")
+        authorization = authorizations[0] if len(authorizations) == 1 else None
         operator = issuer.operator(authorization)
         if operator is not None:
-            if not operator_limiter.allow(f"operator:{operator}"):
+            if not operator_limiters[operator].allow(f"operator:{operator}"):
                 raise too_many()
+            if permission is not None:
+                issuer.permit(operator, permission)
         else:
             limit(request, "admin")
             route = getattr(request.scope.get("route"), "path", "")
@@ -474,26 +485,26 @@ def create_app(
 
     @app.post(f"{base}/admin/offers")
     async def create_offer(request: Request) -> JSONResponse:
-        operator = await admin(request)
+        operator = await admin(request, "offers")
         body = _json(await _body(request, "ISS.SUBJECT.ENTITLEMENT"))
         return JSONResponse(await work(issuer.create_offer, body, operator), 201, NO_STORE)
 
     @app.get(f"{base}/admin/offers/{{subject_ref}}")
     async def offer_progress(request: Request, subject_ref: str) -> JSONResponse:
         """How far a subject has got, for the operator's own pages; no subject data."""
-        await admin(request)
-        return JSONResponse(await work(issuer.subject_progress, subject_ref), headers=NO_STORE)
+        operator = await admin(request, "offers.read")
+        return JSONResponse(await work(issuer.subject_progress, subject_ref, operator), headers=NO_STORE)
 
     @app.get(f"{base}/admin/logins/{{login_state}}")
     async def pending_login(request: Request, login_state: str) -> JSONResponse:
         """What a login waiting for its result is for, so the login service can ask the person's consent."""
-        await admin(request)
-        return JSONResponse(await work(issuer.pending_login, login_state), headers=NO_STORE)
+        operator = await admin(request, "logins")
+        return JSONResponse(await work(issuer.pending_login, login_state, operator), headers=NO_STORE)
 
     @app.post(f"{base}/admin/logins/{{login_state}}")
     async def login_result(request: Request, login_state: str) -> JSONResponse:
         """The operator's login service reports who logged in, or that the login was denied."""
-        operator = await admin(request)
+        operator = await admin(request, "logins")
         body = _json(await _body(request, "ISS.SUBJECT.ENTITLEMENT"))
         return JSONResponse(await work(issuer.complete_login, login_state, body, operator), headers=NO_STORE)
 
@@ -540,40 +551,40 @@ def create_app(
 
     @app.get(f"{base}/admin/deferred")
     async def deferred_issuances(request: Request) -> JSONResponse:
-        await admin(request)
-        return JSONResponse(await work(issuer.deferred_issuances), headers=NO_STORE)
+        operator = await admin(request, "deferred")
+        return JSONResponse(await work(issuer.deferred_issuances, operator), headers=NO_STORE)
 
     @app.post(f"{base}/admin/deferred/{{ref}}/release")
     async def release_deferred(request: Request, ref: str) -> JSONResponse:
-        operator = await admin(request)
+        operator = await admin(request, "deferred")
         return JSONResponse(await work(issuer.decide_deferred, ref, "release", operator), headers=NO_STORE)
 
     @app.post(f"{base}/admin/deferred/{{ref}}/refuse")
     async def refuse_deferred(request: Request, ref: str) -> JSONResponse:
-        operator = await admin(request)
+        operator = await admin(request, "deferred")
         return JSONResponse(await work(issuer.decide_deferred, ref, "refuse", operator), headers=NO_STORE)
 
     @app.post(f"{base}/admin/offers/{{subject_ref}}/cancel")
     async def cancel_offer(request: Request, subject_ref: str) -> JSONResponse:
-        operator = await admin(request)
+        operator = await admin(request, "offers.cancel")
         return JSONResponse(await work(issuer.cancel_offer, subject_ref, operator), headers=NO_STORE)
 
     @app.post(f"{base}/admin/revocations")
     async def revoke(request: Request) -> JSONResponse:
-        operator = await admin(request)
+        operator = await admin(request, None)  # revoke or revoke.slot, by what the body names (Issuer.revoke)
         body = _json(await _body(request, "STATUS.MONOTONIC"))
         return JSONResponse(await work(issuer.revoke, body, operator), headers=NO_STORE)
 
     @app.post(f"{base}/admin/subjects/{{subject_ref}}/erase")
     async def erase(request: Request, subject_ref: str) -> Response:
-        operator = await admin(request)
+        operator = await admin(request, "erase")
         await work(issuer.erase_subject, subject_ref, operator)
         return Response(status_code=204)
 
     @app.api_route(f"{base}/admin/audit/verify", methods=["GET", "POST"])
     async def audit_verify(request: Request) -> JSONResponse:
         """GET checks the chain against the anchor; POST {"signed_head": ...} also against a pulled head."""
-        await admin(request)
+        await admin(request, "audit")
         signed_head = None
         if request.method == "POST":
             body = _json(await _body(request, "ISS.SUBJECT.ENTITLEMENT"))
@@ -585,7 +596,7 @@ def create_app(
 
     @app.get(f"{base}/admin/audit/head")
     async def audit_head(request: Request) -> Response:
-        await admin(request)
+        await admin(request, "audit")
         return Response(await work(issuer.audit_head), media_type="application/jwt", headers=NO_STORE)
 
     if issuer.signers.mdoc is not None and (

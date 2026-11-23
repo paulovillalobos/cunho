@@ -24,6 +24,7 @@ from cunho.errors import IssuerError, observers
 from cunho.jose import b64u, parse_jws, thumbprint
 from cunho.keyring import Keyring
 from cunho.service import ClockWatch, HostClock, Issuer
+from cunho.settings import OPERATOR_PERMISSIONS, OperatorScope
 from eudi_probe.jose import EcKey, jws, jws_hs256
 from eudi_probe.wallet import dpop_proof, key_proof
 
@@ -415,6 +416,9 @@ def settings_kwargs(pki: Pki, **overrides: Any) -> dict[str, Any]:
         "rate_limit_per_minute": 100_000,
         # Revocations show at once in most tests; test_review3_fixes checks the spread on its own.
         "status_revocation_jitter": 0,
+        # The tests of status lists revoke by slot, which no operator token may do unless its scope says so;
+        # test_operator_scopes checks the default on its own.
+        "operator_scopes": {"admin": OperatorScope(frozenset(OPERATOR_PERMISSIONS))},
     }
     base.update(overrides)
     return base

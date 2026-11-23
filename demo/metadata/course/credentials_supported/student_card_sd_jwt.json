@@ -1,0 +1,204 @@
+{
+  "app.foaap.student_card_sd_jwt": {
+    "format": "dc+sd-jwt",
+    "scope": "app.foaap.student_card_sd_jwt",
+    "cryptographic_binding_methods_supported": [
+      "jwk"
+    ],
+    "credential_signing_alg_values_supported": [
+      "ES256"
+    ],
+    "proof_types_supported": {
+      "jwt": {
+        "proof_signing_alg_values_supported": [
+          "ES256"
+        ]
+      }
+    },
+    "vct": "https://foaap.app/vct/student-card/1",
+    "credential_metadata": {
+      "display": [
+        {
+          "name": "Student card (demo)",
+          "locale": "en",
+          "description": "A student card issued by the institution, for campus services",
+          "background_color": "#0b5d4b",
+          "text_color": "#ffffff"
+        },
+        {
+          "name": "Cartão de Estudante (demo)",
+          "locale": "pt-PT",
+          "description": "Um cartão de estudante emitido pela instituição, para os serviços do campus",
+          "background_color": "#0b5d4b",
+          "text_color": "#ffffff"
+        }
+      ],
+      "credential_reuse_policy": {
+        "id": "arf_annex_ii",
+        "options": [
+          {
+            "details": [
+              "limited_time"
+            ],
+            "reissue_trigger_lifetime_left": 604800
+          }
+        ]
+      },
+      "claims": [
+        {
+          "path": [
+            "given_name"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Given name",
+              "locale": "en"
+            },
+            {
+              "name": "Nome próprio",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "family_name"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Family name",
+              "locale": "en"
+            },
+            {
+              "name": "Apelido",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "student_number"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Student number",
+              "locale": "en"
+            },
+            {
+              "name": "Número de estudante",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "european_student_identifier"
+          ],
+          "mandatory": false,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "European Student Identifier",
+              "locale": "en"
+            },
+            {
+              "name": "Identificador Europeu de Estudante",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "institution"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Institution",
+              "locale": "en"
+            },
+            {
+              "name": "Instituição",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "programme"
+          ],
+          "mandatory": false,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Programme",
+              "locale": "en"
+            },
+            {
+              "name": "Curso",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "academic_year"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Academic year",
+              "locale": "en"
+            },
+            {
+              "name": "Ano letivo",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "student_status"
+          ],
+          "mandatory": true,
+          "value_type": "string",
+          "display": [
+            {
+              "name": "Status",
+              "locale": "en"
+            },
+            {
+              "name": "Situação",
+              "locale": "pt-PT"
+            }
+          ]
+        },
+        {
+          "path": [
+            "valid_until"
+          ],
+          "mandatory": true,
+          "value_type": "full-date",
+          "display": [
+            {
+              "name": "Valid until",
+              "locale": "en"
+            },
+            {
+              "name": "Válido até",
+              "locale": "pt-PT"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -14,7 +14,7 @@ import re
 import secrets
 import threading
 import time
-from collections.abc import Callable, Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -58,7 +58,7 @@ from cunho.oauth import Dpop, Grant, Nonces, Offers, Tokens, offer_key, opened, 
 from cunho.proofs import ProofVerifier, ProvenKeys
 from cunho.qualified import CATEGORIES, FILLED, authority, check_provider, names_another_subject
 from cunho.rules import enforce, implements, refuse
-from cunho.settings import CLOCK_TOLERANCE, Profile, Settings
+from cunho.settings import CLOCK_TOLERANCE, SLOT_REVOCATION, OperatorScope, Profile, Settings
 from cunho.signed_metadata import check_access_signer, signed_metadata
 from cunho.signer import KeyringSigner, Signer, load_signer
 from cunho.status import StatusLists, StatusRef
@@ -716,6 +716,13 @@ class Issuer:
         )
         self._check_annex_b()
         self._check_provider_names()
+        for name, scope in settings.operator_scopes.items():
+            unknown = sorted(set(scope.configurations or ()) - set(self.configs.issuable()))
+            if unknown:
+                raise ConfigError(
+                    f"operator {name!r} is limited to configurations this deployment does not issue: "
+                    + ", ".join(unknown)
+                )
         self.request_keys = RequestKeys.load(settings.encryption_keys, settings.encryption_required)
         untyped = sorted(
             metadata.missing_type_metadata(self.configs.all, self.configs.published, self.configs.integrity)
@@ -907,6 +914,123 @@ class Issuer:
         security_log.warning("admin authentication failed: route=%s client=%s token_sent=%s", name, client, had_token)
         self.auth_failures.record(name, had_token, self.time())
 
+    def permit(self, operator: str, permission: str) -> None:
+        """Refuse an operator whose token's scope lacks the permission (operator_scopes): 403 insufficient_scope
+        (RFC 6750 §3.1), and a line in cunho.security, never an audit entry, which a token could otherwise fill."""
+        if permission not in self.settings.scope_of(operator).permissions:
+            security_log.warning("operator %s refused: its token does not allow %s", operator, permission)
+            refuse(
+                "ISS.SUBJECT.ENTITLEMENT",
+                "insufficient_scope",
+                f"this operator token does not allow {permission}",
+                403,
+                scheme="Bearer",
+            )
+
+    def _scope(self, operator: str | None) -> OperatorScope | None:
+        """The scope of an operator limited to some configurations, or None: an operator for all of them, or a call
+        from cunho itself rather than from the admin API."""
+        scope = None if operator is None else self.settings.scope_of(operator)
+        return scope if scope is not None and scope.configurations is not None else None
+
+    def _within(self, operator: str | None, config_ids: Iterable[Any]) -> None:
+        """Refuse an operator limited to some configurations when what it acts on reaches beyond them."""
+        scope = self._scope(operator)
+        if scope is not None and not set(config_ids) <= set(scope.configurations or ()):
+            security_log.warning("operator %s refused: a configuration outside its scope", operator)
+            refuse(
+                "ISS.SUBJECT.ENTITLEMENT",
+                "insufficient_scope",
+                "this operator token does not cover these credential configurations",
+                403,
+                scheme="Bearer",
+            )
+
+    def _subject_configs(self, subject_ref: str) -> list[str] | None:
+        """What a subject was offered or logged in for, as long as a token or a credential of it can be: what an
+        operator limited to some configurations may act on."""
+        kept = self.store.get("subject-scope", subject_ref)
+        configs = kept.get("configs") if isinstance(kept, dict) else self.store.get("subject-configs", subject_ref)
+        return [str(c) for c in configs] if isinstance(configs, list) else None
+
+    def _keep_scope(self, subject_ref: str, configs: list[str], until: int, owner: str | None = None) -> None:
+        """Inside a transaction: keep what the subject is for, and which operator made it, until `until`, never for
+        less than before, so an operator limited to its configurations can still revoke its credentials on their last
+        day (the second reviewer). The operator is kept from the first time: extending the window never changes it."""
+        kept = self.store.get("subject-scope", subject_ref)
+        kept = kept if isinstance(kept, dict) else {}
+        known = kept.get("until")
+        kept_owner = kept.get("owner") if isinstance(kept.get("owner"), str) else None
+        made_by = kept_owner or owner
+        if isinstance(known, int) and known >= until and made_by == kept_owner:
+            return
+        record: dict[str, Any] = {"configs": configs, "until": max(until, known) if isinstance(known, int) else until}
+        if made_by is not None:
+            record["owner"] = made_by
+        # A second longer than `until`, which is counted in whole seconds while what it outlives is stored from the
+        # exact time: never a moment when what a subject is for is known but not who made it.
+        self.store.put("subject-scope", subject_ref, record, max(record["until"] - self.time() + 1, 1))
+
+    def _subject_owner(self, subject_ref: str) -> str | None:
+        """The operator that made the subject's offer or login, while cunho keeps what the subject is for."""
+        kept = self.store.get("subject-scope", subject_ref)
+        owner = kept.get("owner") if isinstance(kept, dict) else None
+        return owner if isinstance(owner, str) else None
+
+    def _owned(self, operator: str | None, subject_ref: str) -> bool:
+        """Whether an issuing system may act on this subject. Two systems may issue the same configuration (Moodle and
+        certifygen both offer the course certificate): a token limited to some configurations that makes offers acts
+        only on what it made itself, never on another system's subjects, nor on a subject made before owners were
+        recorded. A token for every configuration, or one that makes no offers (a
+        registrar that revokes its configurations' credentials, whoever offered them), is not bound to owners."""
+        if not self._bound(operator):
+            return True
+        return self._subject_owner(subject_ref) == operator
+
+    def _bound(self, operator: str | None) -> bool:
+        """Whether an operator is an issuing system bound to the subjects it made: a token whose own scope lets it
+        make offers or report logins, whether or not the scope lists configurations. The admin's token, and a token
+        with no scope of its own, are the operator's own and act on every subject."""
+        if operator is None or operator == "admin":
+            return False
+        scope = self.settings.operator_scopes.get(operator)
+        # Offers and the logins it reports both make subjects: either binds the token.
+        return scope is not None and bool({"offers", "logins"} & set(scope.permissions))
+
+    def _subject_within(self, operator: str | None, subject_ref: str, *, forgotten_is_over: bool = False) -> None:
+        """An operator limited to some configurations acts on a subject only when every configuration it was offered
+        for is among them. cunho keeps what a subject was for while its offer or login can lead to a token and while a
+        credential of it can be valid. Once it has forgotten, and nothing of the subject is live (checked, since a store
+        from before scopes kept less), a read, a cancellation or a revocation gets the answer any subject that is over
+        gets (expired, no live offer, nothing to revoke),
+        so an operator can tell an offer that is over from one it may not touch; an erasure, which is logged, stays
+        refused."""
+        limited = self._scope(operator) is not None
+        if not limited and not self._bound(operator):
+            return
+        configs = self._subject_configs(subject_ref)
+        if configs is None and forgotten_is_over and not self._anything_live(subject_ref):
+            return
+        if limited:
+            self._within(operator, configs or ["?"])
+        if not self._owned(operator, subject_ref):
+            security_log.warning("operator %s refused: a subject another operator made", operator)
+            refuse(
+                "ISS.SUBJECT.ENTITLEMENT",
+                "insufficient_scope",
+                "this operator token does not cover this subject: another system made it",
+                403,
+                scheme="Bearer",
+            )
+
+    def _anything_live(self, subject_ref: str) -> bool:
+        """Whether an offer, a login or a credential of the subject can still be live, from what cunho keeps about it
+        whatever kept its configurations: a store from before scopes has no record of them for a subject whose
+        credentials still live (the second reviewer)."""
+        now = self.clock_watch.now()
+        at = -math.inf if now is None else now
+        return self._offer_live(subject_ref) or bool(self.store.items("issued", f"{subject_ref}:", at=at))
+
     @implements("ISS.SUBJECT.ENTITLEMENT")
     def create_offer(self, body: Any, operator: str) -> dict[str, Any]:
         """The operator decides who is entitled to which credential; cunho checks the data against the rulebook."""
@@ -925,6 +1049,7 @@ class Issuer:
                 "invalid_request",
                 f"{config_id} is not a configuration this deployment issues",
             )
+        self._within(operator, ids)
         published = {
             self.configs.all[c].get("format") for c in self.configs.published if metadata.is_pid(self.configs.all[c])
         }
@@ -994,6 +1119,7 @@ class Issuer:
             # For GET /admin/offers/{subject_ref}: what the offer was for, as long as anything about it is kept,
             # and until when a token can be got from it.
             self.store.put("subject-configs", subject_ref, list(ids), self._subject_window())
+            self._keep_scope(subject_ref, list(ids), int(self.time()) + self._subject_window(), owner=operator)
             self.store.put("subject-offer", subject_ref, int(self.time()) + settings.offer_ttl, settings.offer_ttl)
             if person is not None:
                 self._link_person(subject_ref, str(person))
@@ -1037,6 +1163,7 @@ class Issuer:
             404,
         )
         assert pending is not None
+        self._within(operator, pending["configuration_ids"])  # a denial too is the operator's to report
         if body.get("denied") is True:
             enforce(
                 set(body) == {"denied"},
@@ -1093,6 +1220,7 @@ class Issuer:
             self.store.put("subject-open", subject_ref, ids, window)
             # The browser has the login's life to come back; the code it then gets moves this (Authorization.resume).
             self.store.put("subject-configs", subject_ref, ids, self._subject_window())
+            self._keep_scope(subject_ref, ids, int(self.time()) + self._subject_window(), owner=operator)
             self.store.put("subject-offer", subject_ref, int(self.time()) + settings.login_ttl, settings.login_ttl)
             if person is not None:
                 self._link_person(subject_ref, str(person), window)
@@ -1150,6 +1278,9 @@ class Issuer:
         issuance's credentials or stops it.
         """
         enforce(isinstance(body, dict), "STATUS.MONOTONIC", "invalid_request", "body must be a JSON object")
+        # Whom the operator's token lets it revoke comes before anything the body says is checked.
+        by_subject = body.get("subject_ref") is not None or body.get("person") is not None
+        self.permit(operator, "revoke" if by_subject else SLOT_REVOCATION)
         reason = body.get("reason")
         enforce(
             isinstance(reason, str) and reason in REVOCATION_REASONS,
@@ -1169,6 +1300,7 @@ class Issuer:
                 "invalid_request",
                 "subject_ref is not a reference this issuer handed out",
             )
+            self._subject_within(operator, subject_ref, forgotten_is_over=True)
             with self._logged():
                 return self._revoke_subjects([subject_ref], reason, operator)
         if person is not None:
@@ -1179,8 +1311,21 @@ class Issuer:
                 "person must be 1 to 200 printable ASCII characters without spaces",
             )
             prefix = f"{self._person_ref(str(person))}:"
+            scope = self._scope(operator)
             with self._logged():
                 subjects = [key[len(prefix) :] for key, _ in self.store.items("person", prefix)]
+                if scope is None and self._bound(operator):
+                    # An issuing system for every configuration: the person's subjects it made, and no others.
+                    subjects = [s for s in subjects if self._owned(operator, s)]
+                elif scope is not None:
+                    # An operator limited to some configurations revokes the person's subjects among them only,
+                    # and only those it made: another system's subjects for the same person are not its own.
+                    covered = scope.configurations or frozenset()
+                    subjects = [
+                        s
+                        for s in subjects
+                        if set(self._subject_configs(s) or ["?"]) <= covered and self._owned(operator, s)
+                    ]
                 return self._revoke_subjects(subjects, reason, operator, person=True)
         if (
             isinstance(list_id, str)
@@ -1346,8 +1491,16 @@ class Issuer:
         listed = self.store.get("subject-configs", subject_ref)
         if isinstance(listed, list):
             self.store.put("subject-configs", subject_ref, listed, self._subject_window())
+            # Who made the subject lives as long as what it is for, so the system that made it is never told, near the
+            # end, that another system did.
+            kept = self.store.get("subject-scope", subject_ref)
+            configs = (
+                kept.get("configs") if isinstance(kept, dict) and isinstance(kept.get("configs"), list) else listed
+            )
+            if isinstance(configs, list):
+                self._keep_scope(subject_ref, [str(c) for c in configs], int(self.time()) + self._subject_window())
 
-    def subject_progress(self, subject_ref: str) -> dict[str, Any]:
+    def subject_progress(self, subject_ref: str, operator: str | None = None) -> dict[str, Any]:
         """How far one subject has got (`GET /admin/offers/{subject_ref}`), for the operator's own pages: a demo
         that follows a QR code, a console. Built from what cunho keeps anyway to decide issuance, and never the
         subject data, a code, a token, a transaction_id or the person handle.
@@ -1365,6 +1518,7 @@ class Issuer:
             "not a subject reference this issuer handed out",
             404,
         )
+        self._subject_within(operator, subject_ref, forgotten_is_over=True)
         configurations: dict[str, dict[str, Any]] = {}
         # Per configuration, the newest of its issuance and its reviews: a refresh can ask for a configuration
         # again, and each ask held for review leaves a row of its own until it ends (the second reviewer). At the
@@ -1417,7 +1571,7 @@ class Issuer:
             "refusal": refused if state in ("offered", "redeemed") and isinstance(refused, dict) else None,
         }
 
-    def pending_login(self, login_state: str) -> dict[str, Any]:
+    def pending_login(self, login_state: str, operator: str | None = None) -> dict[str, Any]:
         """What a login the login service has yet to report is for (`GET /admin/logins/{login_state}`), so it can
         show the person what they are about to agree to: the configurations the wallet asked for, the wallet
         solution that asked (the `sub` of its attestation, and the name and version it gives), and until when the
@@ -1431,6 +1585,7 @@ class Issuer:
             404,
         )
         assert pending is not None
+        self._within(operator, pending["configuration_ids"])
         name, version = pending.get("wallet") or (None, None)
         return {
             "configuration_ids": list(pending["configuration_ids"]),
@@ -1476,6 +1631,7 @@ class Issuer:
             "invalid_request",
             "not a subject reference this issuer handed out",
         )
+        self._subject_within(operator, subject_ref, forgotten_is_over=True)
         with self._logged():
             enforce(
                 self._offer_live(subject_ref),
@@ -1503,6 +1659,7 @@ class Issuer:
             "invalid_request",
             "not a subject reference this issuer handed out",
         )
+        self._subject_within(operator, subject_ref)
         with self._logged():
             held = self.vault.data_held(subject_ref) or self.vault.replies_held(subject_ref)
             person = self.store.get("person-of", subject_ref)
@@ -2047,6 +2204,10 @@ class Issuer:
                     "exp": int(self.time() + window),
                 }
                 self.store.put("notification", about, seal(self.keyring, "notification", about, notice), window)
+                # What the subject is for, as long as these credentials live, for operators limited to some.
+                scope = self._subject_configs(grant.subject_ref)
+                if scope is not None:
+                    self._keep_scope(grant.subject_ref, scope, max(exp, int(self.time()) + 60))
                 for key, ref in zip(keys, refs, strict=True):
                     self.store.put(
                         "issued",
@@ -2316,9 +2477,11 @@ class Issuer:
             refuse("PID.VALUES.VALID_AT_VALIDITY_START", "credential_request_denied", "; ".join(exc.problems))
         return self._issue(held, config_id, config, proven, subject, nbf, exp, chained, transaction=ref)
 
-    def deferred_issuances(self) -> dict[str, Any]:
-        """What the operator has to decide: every issuance held or released and not collected yet."""
+    def deferred_issuances(self, operator: str | None = None) -> dict[str, Any]:
+        """What the operator has to decide: every issuance held or released and not collected yet, of the
+        configurations its token covers and, for an issuing system, of the subjects it made."""
         held = [(key, self._held(key)) for key, _ in self.store.items("deferred")]
+        scope = self._scope(operator)
         rows = [
             {
                 "ref": key.rsplit(":", 1)[1],
@@ -2329,6 +2492,8 @@ class Issuer:
             }
             for key, row in held
             if row is not None
+            and (scope is None or row["config"] in (scope.configurations or ()))
+            and self._owned(operator, key.rsplit(":", 1)[0])
         ]
         return {"deferred": sorted(rows, key=lambda r: (r["created"], r["ref"]))}
 
@@ -2354,7 +2519,17 @@ class Issuer:
                 "no issuance held for review with this reference",
                 404,
             )
-            assert isinstance(row, dict)
+            assert isinstance(row, dict) and isinstance(subject_ref, str)
+            self._within(operator, [row["config"]])
+            if not self._owned(operator, subject_ref):
+                security_log.warning("operator %s refused: a review of a subject another operator made", operator)
+                refuse(
+                    "ISS.SUBJECT.ENTITLEMENT",
+                    "insufficient_scope",
+                    "this operator token does not cover this subject: another system made it",
+                    403,
+                    scheme="Bearer",
+                )
             state = "released" if decision == "release" else "refused"
             self.audit.append(
                 f"credential.{state}",

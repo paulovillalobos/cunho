@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.2.0 (2026-11-23)
+
+- Operator scopes (`CUNHO_OPERATOR_SCOPES`): each operator token may be limited to some admin actions and some
+  credential configurations, with its own rate limit.
+- A token that makes offers or reports logins acts only on the subjects it made: reading, cancelling, revoking or
+  erasing another system's subject, or deciding its review, is refused (403, `insufficient_scope`); the review list
+  and revocation by person leave out what others made.
+- Example metadata for a student card (`app.foaap.student_card_sd_jwt`, SD-JWT VC with Type Metadata) beside the
+  course certificate, as the Moodle connector issues them.
+
+Breaking changes, when upgrading from 0.1.0:
+
+- Revoking by status list slot (`POST /admin/revocations` with `list` and `index`), which names no person and can
+  revoke anyone's credential, is now a permission no token has unless its scope names it, the admin's included.
+  To keep it for the admin token: `CUNHO_OPERATOR_SCOPES={"admin": {"permissions": ["offers", "offers.read",
+  "offers.cancel", "logins", "revoke", "revoke.slot", "erase", "deferred", "audit"]}}`. Revocation by
+  `subject_ref` or `person` is unchanged.
+- A request with two `Authorization` headers is refused (401); 0.1.0 used the first.
+
 ## 0.1.0 (2026-11-15)
 
 First public release.

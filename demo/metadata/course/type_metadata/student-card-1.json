@@ -1,0 +1,175 @@
+{
+  "vct": "https://foaap.app/vct/student-card/1",
+  "name": "Student card",
+  "description": "A student card issued by a higher education institution, so its students can prove they are students to campus services and others. A demonstration type.",
+  "display": [
+    {
+      "locale": "en",
+      "name": "Student card (demo)",
+      "description": "A student of the institution",
+      "rendering": {
+        "simple": {
+          "background_color": "#0b5d4b",
+          "text_color": "#ffffff"
+        }
+      }
+    },
+    {
+      "locale": "pt-PT",
+      "name": "Cartão de Estudante (demo)",
+      "description": "Estudante da instituição",
+      "rendering": {
+        "simple": {
+          "background_color": "#0b5d4b",
+          "text_color": "#ffffff"
+        }
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": [
+        "given_name"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Given name"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Nome próprio"
+        }
+      ]
+    },
+    {
+      "path": [
+        "family_name"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Family name"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Apelido"
+        }
+      ]
+    },
+    {
+      "path": [
+        "student_number"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Student number"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Número de estudante"
+        }
+      ]
+    },
+    {
+      "path": [
+        "european_student_identifier"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "European Student Identifier"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Identificador Europeu de Estudante"
+        }
+      ]
+    },
+    {
+      "path": [
+        "institution"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Institution"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Instituição"
+        }
+      ]
+    },
+    {
+      "path": [
+        "programme"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Programme"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Curso"
+        }
+      ]
+    },
+    {
+      "path": [
+        "academic_year"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Academic year"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Ano letivo"
+        }
+      ]
+    },
+    {
+      "path": [
+        "student_status"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Status"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Situação"
+        }
+      ]
+    },
+    {
+      "path": [
+        "valid_until"
+      ],
+      "sd": "always",
+      "display": [
+        {
+          "locale": "en",
+          "label": "Valid until"
+        },
+        {
+          "locale": "pt-PT",
+          "label": "Válido até"
+        }
+      ]
+    }
+  ]
+}

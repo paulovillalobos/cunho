@@ -1258,8 +1258,9 @@ PATCHES: list[tuple[str, str, str, str]] = [
     (
         "R7S5 without a time a subject revocation finds issued records by the wall clock",
         "service.py",
+        "every record still kept counts.\n        now = self.clock_watch.now()\n"
         "        at = -math.inf if now is None else now",
-        "        at = now",
+        "every record still kept counts.\n        now = self.clock_watch.now()\n        at = now",
     ),
     (
         "S10 vault erased after the first configuration of a multi-configuration grant",

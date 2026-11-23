@@ -20,6 +20,35 @@ CLOCK_TOLERANCE = 120
 EXAMPLE_SECRETS = {"", "change-me", "changeme", "secret", "admin", "password", "example", "test"}
 
 
+# What an operator token may do at the admin API (operator_scopes). Revoking by a status list slot, without knowing
+# whose credential it is, is a permission of its own that no token has unless its scope names it: a leaked token could
+# otherwise revoke every credential the deployment issued, one slot after another.
+OPERATOR_PERMISSIONS = (
+    "offers",  # POST /admin/offers, for either grant
+    "offers.read",  # GET /admin/offers/{subject_ref}
+    "offers.cancel",  # POST /admin/offers/{subject_ref}/cancel
+    "logins",  # GET and POST /admin/logins/{login_state}
+    "revoke",  # POST /admin/revocations by subject_ref or person
+    "revoke.slot",  # POST /admin/revocations by list and index
+    "erase",  # POST /admin/subjects/{subject_ref}/erase
+    "deferred",  # GET /admin/deferred, and releasing or refusing what it lists
+    "audit",  # GET /admin/audit/head, GET and POST /admin/audit/verify
+)
+SLOT_REVOCATION = "revoke.slot"
+DEFAULT_PERMISSIONS = frozenset(OPERATOR_PERMISSIONS) - {SLOT_REVOCATION}
+
+
+@dataclass(frozen=True)
+class OperatorScope:
+    """What one operator token may do: its permissions, the credential configurations it acts on (None for all), and
+    its own requests per minute (None for operator_rate_limit_per_minute). A token without a scope of its own has
+    every permission but revoke.slot, for every configuration."""
+
+    permissions: frozenset[str] = DEFAULT_PERMISSIONS
+    configurations: frozenset[str] | None = None
+    rate_limit_per_minute: int | None = None
+
+
 class Profile(StrEnum):
     """Issuer type under eIDAS. It decides which binder rows apply (BINDER-STRENGTH issuer_types)."""
 
@@ -67,6 +96,9 @@ class Settings:
     status_decoy_churn_per_day: float = 0.001
     secret_key_file: Path | None = None
     operators: dict[str, str] = field(default_factory=dict)
+    # What each operator token may do (OperatorScope), by the operator's name, admin included; a name not listed keeps
+    # every permission but revoke.slot.
+    operator_scopes: dict[str, OperatorScope] = field(default_factory=dict)
     published_configurations: tuple[str, ...] | None = None
     display_name: str | None = None
     rate_limit_per_minute: int = 120
@@ -198,6 +230,7 @@ class Settings:
                 )
         if len(set(tokens.values())) != len(tokens):
             raise ConfigError("every operator needs its own token")
+        self._check_operator_scopes(set(tokens))
         if self.audit_retention_days <= 0:
             raise ConfigError("audit_retention_days must be set; EU law leaves the period to national law")
         if self.profile in SIGNER_URL_PROFILES and not self.signer_certificate_url:
@@ -296,6 +329,47 @@ class Settings:
             isinstance(period, bool) or not isinstance(period, int) or not 0 < period <= 366 * 86_400
         ):
             raise ConfigError("preferred_client_status_period must be a whole number of seconds from 1 to a year")
+
+    def _check_operator_scopes(self, names: set[str]) -> None:
+        """Every scope is an operator's, names known permissions, and can be applied: a token limited to some
+        configurations cannot revoke by slot, which names no configuration."""
+        for name, scope in self.operator_scopes.items():
+            if name not in names:
+                raise ConfigError(f"operator_scopes names {name!r}, which is not an operator (admin or operators)")
+            if not isinstance(scope, OperatorScope):
+                raise ConfigError(f"the scope of operator {name!r} must be an OperatorScope")
+            unknown = sorted(set(scope.permissions) - set(OPERATOR_PERMISSIONS))
+            if not scope.permissions or unknown:
+                raise ConfigError(
+                    f"operator {name!r} needs one or more permissions of {', '.join(OPERATOR_PERMISSIONS)}"
+                    + (f", not {', '.join(unknown)}" if unknown else "")
+                )
+            if scope.configurations is not None:
+                if not scope.configurations or not all(isinstance(c, str) and c for c in scope.configurations):
+                    raise ConfigError(f"the configurations of operator {name!r} must be a non-empty list of ids")
+                if SLOT_REVOCATION in scope.permissions:
+                    raise ConfigError(
+                        f"operator {name!r} is limited to some configurations, so it cannot have revoke.slot: a "
+                        "status list slot names no configuration"
+                    )
+            if (
+                name != "admin"
+                and SLOT_REVOCATION in scope.permissions
+                and {"offers", "logins"} & set(scope.permissions)
+            ):
+                # A token that makes subjects is bound to its own (Issuer._bound); a slot names no subject, so slot
+                # revocation would reach every system's credentials.
+                raise ConfigError(
+                    f"operator {name!r} makes subjects and is bound to its own, so it cannot have revoke.slot: a "
+                    "status list slot names no subject"
+                )
+            limit = scope.rate_limit_per_minute
+            if limit is not None and (isinstance(limit, bool) or not isinstance(limit, int) or limit < 1):
+                raise ConfigError(f"the rate limit of operator {name!r} must be at least 1 request per minute")
+
+    def scope_of(self, operator: str) -> OperatorScope:
+        """What the operator's token may do: its own scope, or every permission but revoke.slot."""
+        return self.operator_scopes.get(operator) or OperatorScope()
 
     def _check_code_flow(self) -> None:
         """The login and the redirect allow-list (ISS.IDPROOF.PLUG_REQUIRED, OAUTH.REDIRECT_URI_EXACT)."""
@@ -513,6 +587,7 @@ class Settings:
             dpop_server_nonce=flag("DPOP_SERVER_NONCE"),
             secret_key_file=path("SECRET_KEY_FILE"),
             operators=dict(item.split("=", 1) for item in env.get("CUNHO_OPERATORS", "").split(",") if "=" in item),
+            operator_scopes=_operator_scopes(env.get("CUNHO_OPERATOR_SCOPES")),
             published_configurations=tuple(c for c in env.get("CUNHO_PUBLISHED_CONFIGURATIONS", "").split(",") if c)
             or None,
             display_name=env.get("CUNHO_DISPLAY_NAME") or None,
@@ -613,3 +688,37 @@ def _redirect_uris(text: str | None) -> dict[str, tuple[str, ...]]:
     if not isinstance(value, dict) or not all(isinstance(v, list) for v in value.values()):
         raise ConfigError("CUNHO_REDIRECT_URIS must be a JSON object of arrays")
     return {str(k): tuple(v) for k, v in value.items()}
+
+
+def _operator_scopes(text: str | None) -> dict[str, OperatorScope]:
+    """CUNHO_OPERATOR_SCOPES: a JSON object from each operator's name to its scope, an object of permissions (a
+    non-empty array), and optionally configurations (a non-empty array of ids) and rate_limit_per_minute."""
+    if not text:
+        return {}
+    try:
+        value = json.loads(text)
+    except ValueError:
+        raise ConfigError("CUNHO_OPERATOR_SCOPES must be a JSON object of operator scopes") from None
+    if not isinstance(value, dict):
+        raise ConfigError("CUNHO_OPERATOR_SCOPES must be a JSON object of operator scopes")
+    scopes: dict[str, OperatorScope] = {}
+    for name, scope in value.items():
+        if not isinstance(scope, dict) or not set(scope) <= {"permissions", "configurations", "rate_limit_per_minute"}:
+            raise ConfigError(
+                f"the scope of operator {name!r} takes permissions, and optionally configurations and "
+                "rate_limit_per_minute"
+            )
+        permissions = scope.get("permissions")
+        if not isinstance(permissions, list) or not all(isinstance(p, str) for p in permissions):
+            raise ConfigError(f"the permissions of operator {name!r} must be an array of names")
+        configurations = scope.get("configurations")
+        if configurations is not None and (
+            not isinstance(configurations, list) or not all(isinstance(c, str) for c in configurations)
+        ):
+            raise ConfigError(f"the configurations of operator {name!r} must be an array of ids")
+        scopes[str(name)] = OperatorScope(
+            frozenset(permissions),
+            None if configurations is None else frozenset(configurations),
+            scope.get("rate_limit_per_minute"),
+        )
+    return scopes
