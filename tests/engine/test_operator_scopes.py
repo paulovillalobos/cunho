@@ -254,6 +254,7 @@ BROKEN: list[tuple[str, dict[str, Any], str]] = [
         {"moodle": OperatorScope(frozenset({"revoke.slot"}), frozenset({SD_JWT}))},
         "cannot have revoke.slot",
     ),
+    ("an empty configuration id", {"moodle": OperatorScope(configurations=frozenset({""}))}, "non-empty list of ids"),
     ("a rate of zero", {"moodle": OperatorScope(rate_limit_per_minute=0)}, "at least 1 request per minute"),
     ("a rate that is no number", {"moodle": OperatorScope(rate_limit_per_minute=True)}, "at least 1 request"),
 ]
@@ -299,6 +300,8 @@ def test_scopes_come_from_the_environment(pki: Pki) -> None:
         ('{"moodle": {"permissions": "offers"}}', "array of names"),
         ('{"moodle": {"permissions": ["offers"], "configurations": "x"}}', "array of ids"),
         ('{"moodle": {"permissions": ["offers"], "tokens": 1}}', "takes permissions"),
+        ('{"moodle": ["permissions"]}', "takes permissions"),
+        ('{"moodle": {"permissions": ["offers"], "configurations": [1]}}', "must be an array of ids"),
     ):
         with pytest.raises(ConfigError, match=reason):
             Settings.from_env(env | {"CUNHO_OPERATOR_SCOPES": text})

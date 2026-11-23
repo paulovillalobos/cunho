@@ -30,6 +30,8 @@ from .helpers import ADMIN_TOKEN, ISSUER, Clock, settings_kwargs
 
 ROOT = Path(__file__).resolve().parents[2]
 OLD = "45ec9be"
+# What OLD_PHASE wrote when run by the 45ec9be code (old.json, the store, its keyring, anchor and test PKI).
+FIXTURE = Path(__file__).resolve().parent / "fixtures" / "store-45ec9be"
 AUTH = {"Authorization": f"Bearer {ADMIN_TOKEN}"}
 SETTINGS = {"status_revocation_jitter": 3600, "status_decoy_churn_per_day": 0.05}
 
@@ -89,12 +91,13 @@ out["revoked"] = sorted(int(k.split(":")[1]) for k, v in issuer.store.items("sta
 def old_store(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """A store, keyring, anchor and PKI written by the 45ec9be code, run from that commit's tree. The tree is
     read with `git archive` into a temporary directory, so nothing is written into the repository. The
-    repository is found through CUNHO_SOURCE_REPO when the tests run on a copy (the mutation run); without its
-    history the test is skipped (review 7, L7)."""
+    repository is found through CUNHO_SOURCE_REPO when the tests run on a copy (the mutation run). A checkout
+    without that history (the public repository is one commit) uses FIXTURE instead: the files the same run
+    wrote, kept as they came out."""
     repo = Path(os.environ.get("CUNHO_SOURCE_REPO", ROOT))
     known = subprocess.run(["git", "-C", str(repo), "cat-file", "-e", f"{OLD}^{{commit}}"], capture_output=True)
     if known.returncode != 0:
-        pytest.skip(f"needs the repository's history ({OLD}); set CUNHO_SOURCE_REPO to a clone that has it")
+        return FIXTURE
     root = tmp_path_factory.mktemp("upgrade")
     tree, work = root / f"cunho-{OLD}", root / "work"
     tree.mkdir()

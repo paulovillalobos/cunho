@@ -7,6 +7,11 @@ exists (the code moved on), so an entry cannot outlive its reason.
 from __future__ import annotations
 
 EQUIVALENT: dict[str, str] = {
+    # Operator scopes
+    "service.py:Issuer._bound: drop: operator is None in operator is None or operator == 'admin'": (
+        "operator_scopes is keyed by operator names, which are strings, so a None operator finds no scope and is "
+        "not bound either way"
+    ),
     # M4 piece A
     "cose.py:verify1: flip: set(protected) <= KNOWN_HEADERS [0]": (
         "the protected labels equal KNOWN_HEADERS only when they include crit, which the same condition refuses "
