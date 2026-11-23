@@ -97,7 +97,12 @@ def old_store(tmp_path_factory: pytest.TempPathFactory) -> Path:
     repo = Path(os.environ.get("CUNHO_SOURCE_REPO", ROOT))
     known = subprocess.run(["git", "-C", str(repo), "cat-file", "-e", f"{OLD}^{{commit}}"], capture_output=True)
     if known.returncode != 0:
-        return FIXTURE
+        # A checkout does not keep file modes, and cunho reads no key that others may read.
+        copy = tmp_path_factory.mktemp("upgrade") / "work"
+        shutil.copytree(FIXTURE, copy)
+        for key in [copy / "m.key", *(copy / "pki").glob("*.key")]:
+            key.chmod(0o600)
+        return copy
     root = tmp_path_factory.mktemp("upgrade")
     tree, work = root / f"cunho-{OLD}", root / "work"
     tree.mkdir()

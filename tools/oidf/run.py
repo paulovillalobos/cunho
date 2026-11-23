@@ -610,17 +610,24 @@ def send_offer(endpoint: str, code_flow: bool, fmt: dict[str, Any]) -> None:
 
 
 def refused_after(log: list[dict[str, Any]]) -> list[str]:
-    """The placeholders after which the browser got a 400 from cunho's authorization endpoint and stayed there."""
+    """The placeholders after which the browser got a 400 from cunho's authorization endpoint and stayed there.
+
+    The suite's browser runs beside the module, so its entries interleave with others: a late "Completed
+    processing of webpage" for an earlier page (status 200) can come between the placeholder and the refusal. So
+    the browser's own responses are read, each with the URL logged next."""
     found = []
     for i, entry in enumerate(log):
         placeholder = entry.get("upload")
         if not isinstance(placeholder, str):
             continue
         after = log[i + 1 :]
-        status = next((e.get("response_status_code") for e in after if "response_status_code" in e), None)
-        url = next((str(e["url"]) for e in after if isinstance(e.get("url"), str)), "")
-        if str(status) == "400" and url.startswith(f"{ISSUER}/authorize"):
-            found.append(placeholder)
+        for j, e in enumerate(after):
+            if e.get("msg") != "Scripted browser HTTP response" or str(e.get("response_status_code")) != "400":
+                continue
+            url = next((str(n["url"]) for n in after[j + 1 :] if isinstance(n.get("url"), str)), "")
+            if url.startswith(f"{ISSUER}/authorize"):
+                found.append(placeholder)
+                break
     return found
 
 
