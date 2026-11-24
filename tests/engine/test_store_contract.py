@@ -17,7 +17,7 @@ import pytest
 from cunho.errors import ConfigError
 from cunho.service import Issuer
 from cunho.settings import Settings
-from cunho.store import MemoryStore, PostgresStore, SqliteStore, Store
+from cunho.store import SCHEMA_LOCK, MemoryStore, PostgresStore, SqliteStore, Store
 from eudi_probe.jose import EcKey
 
 from . import store_workers
@@ -178,6 +178,34 @@ def test_writers_go_one_at_a_time_across_processes(pg_url: str) -> None:
 
 def test_workers_starting_together_create_the_table_once(pg_url: str) -> None:
     assert run_in_processes(store_workers.opens, [(pg_url,)] * 6) == [True] * 6
+
+
+def test_a_worker_starting_while_another_creates_the_table_waits_for_it(pg_url: str) -> None:
+    """The race above, made certain: one worker is caught between creating the table and committing, as on a runner
+    whose workers start a little apart, and the other must wait for it rather than create the table a second time."""
+    first = psycopg.connect(pg_url, autocommit=True)
+    first.execute("BEGIN")
+    first.execute("SELECT pg_advisory_xact_lock(%s)", (SCHEMA_LOCK,))
+    first.execute(
+        "CREATE TABLE IF NOT EXISTS kv (ns text NOT NULL, key bytea NOT NULL, value text NOT NULL, "
+        "expires double precision, PRIMARY KEY (ns, key))"
+    )
+    failed: list[BaseException] = []
+
+    def second() -> None:
+        try:
+            PostgresStore(pg_url).close()
+        except BaseException as exc:  # noqa: BLE001 - whatever it raises is the failure
+            failed.append(exc)
+
+    thread = threading.Thread(target=second)
+    thread.start()
+    time.sleep(0.5)
+    assert thread.is_alive(), "the second worker went ahead while the first was creating the table"
+    first.execute("COMMIT")
+    first.close()
+    thread.join(10)
+    assert not thread.is_alive() and failed == []
 
 
 def test_a_write_waits_for_another_workers_transaction(pg_url: str, clock: Clock) -> None:
